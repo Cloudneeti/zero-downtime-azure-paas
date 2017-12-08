@@ -43,6 +43,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <WebAppZipName>FrontEndWebApp.zip</WebAppZipName>
+    <WebAppSrcFolder>bin</WebAppSrcFolder>
+    <ArtifactsFolderV1>$(SolutionDir)\deployment\artifacts\V1\webapp</ArtifactsFolderV1>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -146,6 +151,30 @@
     <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
+  <UsingTask TaskName="Zip" TaskFactory="CodeTaskFactory" AssemblyName="Microsoft.Build.Tasks.Core">
+    <ParameterGroup>
+      <Src ParameterType="System.String" Required="true" />
+      <Dest ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO.Compression.FileSystem" />
+      <Reference Include="System.Threading" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          System.IO.Compression.ZipFile.CreateFromDirectory(Src, Dest);
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name="ZipWebAppV1" AfterTargets="Build">
+    <Message Text="Zip Web App" />
+    <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolderV1)\$(WebAppZipName)" />
+  </Target>
+  <Target Name="ClearFunctions" BeforeTargets="Build">
+    <Message Text="Delete Existing Web App" />
+    <Delete Files="$(ArtifactsFolderV1)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolderV1)\$(WebAppZipName)')" />
+  </Target>
+  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -153,4 +182,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>
