@@ -43,6 +43,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <WebAppZipName>FrontEndWebApp.zip</WebAppZipName>
+    <WebAppSrcFolder>bin</WebAppSrcFolder>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -90,7 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -145,6 +151,34 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.5\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <UsingTask TaskName="Zip" TaskFactory="CodeTaskFactory" AssemblyName="Microsoft.Build.Tasks.Core">
+    <ParameterGroup>
+      <Src ParameterType="System.String" Required="true" />
+      <Dest ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO.Compression.FileSystem" />
+      <Reference Include="System.Threading" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+          System.IO.Compression.ZipFile.CreateFromDirectory(Src, Dest);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="ZipWebApp" AfterTargets="Build">
+    <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='WebAppVersion']/@value">
+      <Output TaskParameter="Result" ItemName="fever" />
+    </XmlPeek>
+    <Message Text="Target Artifact version: @(fever)" Importance="high" />
+    <PropertyGroup>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\webapp</ArtifactsFolder>
+    </PropertyGroup>
+    <Message Text="Zip Web App" />
+    <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />
+  </Target>
+  <Target Name="ClearFunctions" BeforeTargets="Build">
+    <Message Text="Delete Existing Web App" />
+    <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
