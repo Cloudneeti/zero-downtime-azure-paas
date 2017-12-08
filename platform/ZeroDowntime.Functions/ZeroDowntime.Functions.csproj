@@ -4,9 +4,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <FunctionsZipName>MiddleTierFunction.zip</FunctionsZipName>
-    <DropFolderName>drop</DropFolderName>
     <FunctionSrcFolder>bin\$(Configuration)\net461</FunctionSrcFolder>
-    <ArtifactsFolderV1>$(SolutionDir)\deployment\artifacts\V1\function</ArtifactsFolderV1>
   </PropertyGroup>
   <ItemGroup>    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.2" />
@@ -15,6 +13,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="App.Local.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -32,18 +33,26 @@
       <Reference Include="System.IO.Compression.FileSystem" />
       <Reference Include="System.Threading" />
       <Code Type="Fragment" Language="cs">
-        <![CDATA[
+        <![CDATA[       
           System.IO.Compression.ZipFile.CreateFromDirectory(Src, Dest);
       ]]>
       </Code>
     </Task>
   </UsingTask>
-  <Target Name="ZipFunctionsV1" AfterTargets="_GenerateFunctionsPostBuild">
+  <Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
+     <XmlPeek XmlInputPath="App.Local.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
+        <Output TaskParameter="Result" ItemName="fever" />
+    </XmlPeek>
+    <Message Text="Target Artifact version: @(fever)" Importance="high" />
+    <PropertyGroup>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\function</ArtifactsFolder>
+    </PropertyGroup>
+    
     <Message Text="Zip Functions" />
-    <Zip Src="$(FunctionSrcFolder)" Dest="$(ArtifactsFolderV1)\$(FunctionsZipName)" />
+    <Zip Src="$(FunctionSrcFolder)" Dest="$(ArtifactsFolder)\$(FunctionsZipName)" />
   </Target>
   <Target Name="ClearFunctions" BeforeTargets="Build">
     <Message Text="Delete Existing Functions" />
-    <Delete Files="$(ArtifactsFolderV1)\$(FunctionsZipName)" Condition="Exists('$(ArtifactsFolderV1)\$(FunctionsZipName)')" />
+    <Delete Files="$(ArtifactsFolder)\$(FunctionsZipName)" Condition="Exists('$(ArtifactsFolder)\$(FunctionsZipName)')" />
   </Target>
 </Project>

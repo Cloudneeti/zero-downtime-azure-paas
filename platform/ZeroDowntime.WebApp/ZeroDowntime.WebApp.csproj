@@ -46,7 +46,6 @@
   <PropertyGroup>
     <WebAppZipName>FrontEndWebApp.zip</WebAppZipName>
     <WebAppSrcFolder>bin</WebAppSrcFolder>
-    <ArtifactsFolderV1>$(SolutionDir)\deployment\artifacts\V1\webapp</ArtifactsFolderV1>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -95,7 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -159,22 +160,26 @@
     <Task>
       <Reference Include="System.IO.Compression.FileSystem" />
       <Reference Include="System.Threading" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
+      <Code Type="Fragment" Language="cs"><![CDATA[
           System.IO.Compression.ZipFile.CreateFromDirectory(Src, Dest);
-      ]]>
-      </Code>
+      ]]></Code>
     </Task>
   </UsingTask>
-  <Target Name="ZipWebAppV1" AfterTargets="Build">
+  <Target Name="ZipWebApp" AfterTargets="Build">
+    <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='WebAppVersion']/@value">
+      <Output TaskParameter="Result" ItemName="fever" />
+    </XmlPeek>
+    <Message Text="Target Artifact version: @(fever)" Importance="high" />
+    <PropertyGroup>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\webapp</ArtifactsFolder>
+    </PropertyGroup>
     <Message Text="Zip Web App" />
-    <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolderV1)\$(WebAppZipName)" />
+    <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />
   </Target>
   <Target Name="ClearFunctions" BeforeTargets="Build">
     <Message Text="Delete Existing Web App" />
-    <Delete Files="$(ArtifactsFolderV1)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolderV1)\$(WebAppZipName)')" />
+    <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
   </Target>
-  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -182,5 +187,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
 </Project>
