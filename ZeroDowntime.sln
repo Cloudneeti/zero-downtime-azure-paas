@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroDowntime.Functions", "p
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroDowntime.Core", "platform\ZeroDowntime.Core\ZeroDowntime.Core.csproj", "{6057A3FA-F409-48F6-A393-6D55AB1F3A61}"
 EndProject
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "ZeroDowntime.Deployment", "deployment\ZeroDowntime.Deployment.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6057A3FA-F409-48F6-A393-6D55AB1F3A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6057A3FA-F409-48F6-A393-6D55AB1F3A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6057A3FA-F409-48F6-A393-6D55AB1F3A61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
