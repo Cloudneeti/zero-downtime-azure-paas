@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentReference": {
+      "value": {
+        "prefix": "demo",
+        "_artifactsLocation": "auto-update",
+        "_artifactsLocationSasToken": "auto-update",
+        "location":"auto-update",
+        "tags": {
+          "environment" : "Pilot"
+        },
+        "tenantId": "auto-update",
+        "adAppClientId": "auto-update",
+        "deploymentPassword": "auto-update",
+        "tenantDomain": "auto-update"
+      }
+    },
+    "frontEndTier": {
+      "value": {
+        "function": [
+          {
+            "name": "ZeroDownTime",
+            "serviceName": "zdt",
+            "hostingPlanServiceName": "zdt",
+            "tags": {
+              "tier": "frontEnd",
+              "serviceName": "zdt"
+            }
+          }
+        ]
+      }
+    },
+    "middleTier": {
+      "metadata": {
+        
+      },
+      "value": ""
+    },
+    "backEndTier": {
+      "metadata": {
+        
+      },
+      "value": ""
+    },
+    "operations": {
+      "value": {
+        "appInsights":{
+          "serviceName": "zdt",
+          "tags": {
+            "tier": "Operations"
+          }
+        },
+        "logAnalytics" :{
+          "serviceName": "zdt",
+          "tags": {
+            "tier": "Operations"
+          }
+        },
+        "keyVault": {
+          "serviceName": "zdt",
+          "secretExpirationDate": "auto-update",
+          "tags": {
+            "tier": "Operations"
+          },
+          "accessPolicies": [
+            {
+              "tenantId": "auto-update",
+              "objectId": "siteAdminObjectId-auto-update",
+              "permissions": {
+                "keys": [
+                  "get", "list", "create", "update", "import", "delete", "backup", "restore", "recover"
+                ],
+                "secrets": [
+                  "get", "list", "set", "delete", "backup", "restore", "recover"
+                ],
+                "certificates": [
+                  "get", "list", "delete", "create", "import", "update", "managecontacts", "getissuers", "listissuers", "setissuers", "deleteissuers", "manageissuers", "recover"
+                ]
+              }
+            },
+            {
+              "tenantId": "auto-update",
+              "objectId": "AADServicePrincipalObjectId-auto-update",
+              "permissions": {
+                "keys": [
+                  "get", "wrapKey", "unwrapKey", "sign", "verify"
+                ],
+                "secrets": [
+                  "get", "list" 
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
