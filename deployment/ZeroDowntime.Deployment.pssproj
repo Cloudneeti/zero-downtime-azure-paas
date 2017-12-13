@@ -50,11 +50,17 @@
     <Folder Include="scripts\pshscripts" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Deploy.ps1" />
+    <Compile Include="How-To-Run.ps1" />
+    <Compile Include="scripts\pshscripts\Configure-AADUsers.ps1" />
+    <Compile Include="scripts\pshscripts\Enable-AzureRMDiagnostics.ps1" />
+    <Compile Include="scripts\pshscripts\PshFunctions.ps1" />
     <Compile Include="ZeroDowntime.Deployment.ps1" />
     <Compile Include="ZeroDowntime.Deployment.psd1" />
     <Compile Include="ZeroDowntime.Deployment.psm1" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="scripts\jsonscripts\subscription.roleassignments.json" />
     <Content Include="templates\azuredeploy.parameters.json" />
     <Content Include="templates\buildingblocks\keyvault\azuredeploy.json" />
     <Content Include="templates\buildingblocks\monitoring\azuredeploy.json" />

@@ -200,10 +200,6 @@ function Update-RoleAssignments {
         [String]$prefix,
 
         # <!<SnippetParam2Help>!>
-		[Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true,Position=2)]
-        [String]$env,
-
-        # <!<SnippetParam2Help>!>
 		[Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true,Position=3)]
         [String]$domain
 	)
@@ -212,7 +208,6 @@ function Update-RoleAssignments {
     {
 		$jsonObj = Get-Content $inputFile
 		$jsonObj = $jsonObj -replace 'hash', $prefix
-		$jsonObj = $jsonObj -replace 'env', $env
 		$jsonObj | Out-File $env:Temp\roleassignments.json -Force
 		$jsonObj = Get-Content $env:Temp\roleassignments.json | ConvertFrom-Json
 		$users = ($jsonObj.UserConfiguration).PSObject.Properties.Name

@@ -95,7 +95,7 @@ param
 )
 
 ### Manage Session Configuration
-$Host.UI.RawUI.WindowTitle = "NMBE - Zero DownTime Deployment"
+$Host.UI.RawUI.WindowTitle = "NBME - Zero DownTime Deployment"
 $ErrorActionPreference = 'Stop'
 $WarningPreference = 'Continue'
 Set-StrictMode -Version 3
@@ -112,9 +112,8 @@ $outputFolderPath = "$(Split-Path $MyInvocation.MyCommand.Path)\output"
 
 ### Install required powershell modules
 $requiredModules=@{
-    'AzureRM' = '4.4.0';
-    'AzureAD' = '2.0.0.131';
-    'MSOnline' = '1.1.166.0'
+    'AzureRM' = '5.1.1';
+    'AzureAD' = '2.0.0.131'
 }
 
 if ($installModules) {
@@ -177,6 +176,157 @@ Else{
 }
 
 if ($clearDeployment) {
+    try {
+        log "Looking for Resources to Delete.." Magenta
+        log "List of deployment resources for deletion" -displaywithouttimestamp
+
+        #List The Resource Group
+        $resourceGroupList =@(
+            (($deploymentPrefix, 'monitoring', $environment, 'rg') -join '-'),
+            (($deploymentPrefix, 'workload', $environment, 'rg') -join '-')
+        )
+        log "Resource Groups: " Cyan -displaywithouttimestamp
+        $resourceGroupList | ForEach-Object {
+            $resourceGroupName = $_
+            $resourceGroupObj = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction SilentlyContinue
+            if($resourceGroupObj-ne $null)
+            {
+                log "$($resourceGroupObj.ResourceGroupName)." -displaywithouttimestamp -nonewline
+                $rgCount = 1 
+            }
+            else 
+            {
+                $rgCount = 0
+                log "$resourceGroupName Resource group does not exist." -displaywithouttimestamp
+            }
+        }
+
+        #List the Service principal
+        log "Service Principals: " Cyan -displaywithouttimestamp
+        $servicePrincipalObj = Get-AzureRmADServicePrincipal -SearchString $deploymentPrefix -ErrorAction SilentlyContinue
+        if ($servicePrincipalObj -ne $null)
+        {
+            $servicePrincipalObj | ForEach-Object {
+                log "$($_.DisplayName)" -displaywithouttimestamp -nonewline
+            }
+        }
+        else{ 
+            log "Service Principal does not exist for '$deploymentPrefix' prefix" Yellow
+        }
+
+        #List the AD Application
+        $adApplicationObj = Get-AzureRmADApplication -DisplayNameStartWith "$deploymentPrefix Azure HealthCare LOS Sample"
+        log "AD Applications: " Cyan -displaywithouttimestamp
+        if($adApplicationObj -ne $null){
+            log "$($adApplicationObj.DisplayName)" -displaywithouttimestamp -nonewline
+        }
+        Else{
+            log "AD Application does not exist for '$deploymentPrefix' prefix" Yellow -displaywithouttimestamp
+        }
+
+        #List the AD Users
+        log "AD Users: " Cyan -displaywithouttimestamp
+        foreach ($actor in $actors) {
+            $upn = Get-AzureRmADUser -SearchString $actor
+            $fullUpn = $actor + '@' + $tenantDomain
+            if ($upn -ne $null )
+            {
+                log "$fullUpn" -displaywithouttimestamp -nonewline
+            }
+        }
+        if ($upn -eq $null)
+        {
+            log "No user exist" Yellow -displaywithouttimestamp
+        }
+        Write-Host ""
+        # Remove deployment resources
+        $message = "Do you want to DELETE above listed Deployment Resources ?"
+        $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
+        "Deletes Deployment Resources"
+        $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
+        "Skips Deployment Resources Deletion"
+        $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+        $result = $host.ui.PromptForChoice($null, $message, $options, 0)
+        switch ($result){
+            0 {
+                # Remove ResourceGroups
+                if ($rgCount -eq 1)
+                {
+                $resourceGroupList =@(
+                    (($deploymentPrefix, 'monitoring', $environment, 'rg') -join '-'),
+                    (($deploymentPrefix, 'workload', $environment, 'rg') -join '-')
+                )
+                $resourceGroupList | ForEach-Object { 
+                    $resourceGroupName = $_
+                    Get-AzureRmResourceGroup -Name $resourceGroupName | Out-Null
+                        log "Deleting Resource group $resourceGroupName" Yellow -displaywithouttimestamp
+                        Remove-AzureRmResourceGroup -Name $resourceGroupName -Force| Out-Null
+                        log "ResourceGroup $resourceGroupName was deleted successfully" Yellow -displaywithouttimestamp
+                    }
+                }
+
+                # Remove Service Principal
+                if ($servicePrincipals = Get-AzureRmADServicePrincipal -SearchString $deploymentPrefix) {
+                    $servicePrincipals | ForEach-Object {
+                        log "Removing Service Principal - $($_.DisplayName)."
+                        Remove-AzureRmADServicePrincipal -ObjectId $_.Id -Force
+                        log "Service Principal - $($_.DisplayName) was removed successfully" Yellow -displaywithouttimestamp
+                    }
+                }
+
+                # Remove Azure AD Users
+                
+                if ($upn -ne $null)
+                {
+                    Write-Host "FOR DEVELOPMENT PURPOSE WE RECONFIRMING FOR AAD USERS DELETION." -ForegroundColor Magenta
+                          # Prompt to remove AAD Users
+                     $message = "Do you want to DELETE AAD users?"
+                     $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
+                     "Deletes AAD users"
+                     $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
+                     "Skips AAD users Deletion"
+                     $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+                    $result = $host.ui.PromptForChoice($null, $message, $options, 0)
+                    switch ($result){
+                        0 {
+                    log "Removing Azure AAD User" Yellow -displaywithouttimestamp
+                    foreach ($actor in $actors) {
+                        try {
+                            $upn = $actor + '@' + $tenantDomain
+                            Get-AzureRmADUser -SearchString $upn
+                            Remove-AzureRmADUser -UPNOrObjectId $upn -Force -ErrorAction SilentlyContinue
+                            log "$upn was deleted successfully. " Yellow -displaywithouttimestamp
+                        }
+                        catch [System.Exception] {
+                            logerror
+                            Break
+                        }
+                    }
+                }
+                1 {
+                    log "Skipped - AAD users Deletion." Cyan
+                }
+            }
+                }
+				
+                #Remove AAD Application.
+                if($adApplicationObj)
+                {
+                    log "Removing Azure AD Application - $deploymentPrefix Azure HealthCare LOS Sample." Yellow -displaywithouttimestamp
+                    Get-AzureRmADApplication -DisplayNameStartWith "$deploymentPrefix Azure HealthCare LOS Sample" | Remove-AzureRmADApplication -Force
+                    log "Azure AD Application - $deploymentPrefix Azure HealthCare LOS Sample deleted successfully" Yellow -displaywithouttimestamp
+                }
+                log "Resources cleared successfully." Magenta
+            }
+            1 {
+                log "Skipped - Resource Deletion." Cyan
+            }
+        }
+    }
+    catch {
+        logerror
+        Break
+    }
 }
 else {
     ### Collect deployment output into Hashtable
@@ -240,7 +390,7 @@ else {
     ### Create Resource Group for deployment and assigning RBAC to users.
     $components = @("workload1", "workload2" ,"networking", "operations", "backend")
     $components | ForEach-Object { 
-        $rgName = (($deploymentPrefix,$_,$environment,'rg') -join '-')
+        $rgName = (($deploymentPrefix,$_,'rg') -join '-')
         log "Creating ResourceGroup $rgName at $location."
         New-AzureRmResourceGroup -Name $rgName -Location $location -Force -OutVariable $_
     }
@@ -251,7 +401,7 @@ else {
     $rbacData = Get-Content "$scriptroot\scripts\jsonscripts\subscription.roleassignments.json" | ConvertFrom-Json
     $rbacData.Subscription.Id = $subscriptionId
     ( $rbacData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $rbactmp
-    Update-RoleAssignments -inputFile $rbactmp -prefix $deploymentPrefix -env $environment -domain $tenantDomain
+    Update-RoleAssignments -inputFile $rbactmp -prefix $deploymentPrefix -domain $tenantDomain
     Start-Sleep 10
 
     ### Create PSCredential Object for SiteAdmin

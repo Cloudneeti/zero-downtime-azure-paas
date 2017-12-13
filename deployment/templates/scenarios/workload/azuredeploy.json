@@ -19,11 +19,7 @@
       "apiVersion": "2017-05-10", 
       "name": "deploy-functionapp", 
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "deploy-sql",
-        "deploy-blobstorage",
-        "deploy-keyvault"
-      ],
+      "dependsOn": [],
       "properties": { 
          "mode": "Incremental",
         "templateLink": {
@@ -48,14 +44,5 @@
       }
     }
   ],
-  "outputs": {
-    "keyVaultName":{
-      "type": "string",
-      "value": "[reference('deploy-keyvault').outputs.keyVaultName.value]"
-    },
-    "keyVaultUri":{
-      "type": "string",
-      "value": "[concat('https://', reference('deploy-keyvault').outputs.keyVaultName.value, '.vault.azure.net/')]"
-    }
-  }
+  "outputs": {}
 }
