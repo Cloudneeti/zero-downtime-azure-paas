@@ -1,0 +1,34 @@
+﻿{
+  "Subscription": {
+    "Id": ""
+  },
+  "UserConfiguration": {
+    "Alex_SiteAdmin": [
+      {
+        "Subscription": [
+          {
+            "role": [
+              {
+                "name": "Owner"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Han_Auditor": [
+      {
+        "Subscription": [
+          {
+            "role": [
+              {
+                "name": "Network Contributor"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "CustomRoles":[]
+}
