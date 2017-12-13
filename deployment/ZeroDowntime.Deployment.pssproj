@@ -55,9 +55,6 @@
     <Compile Include="scripts\pshscripts\Configure-AADUsers.ps1" />
     <Compile Include="scripts\pshscripts\Enable-AzureRMDiagnostics.ps1" />
     <Compile Include="scripts\pshscripts\PshFunctions.ps1" />
-    <Compile Include="ZeroDowntime.Deployment.ps1" />
-    <Compile Include="ZeroDowntime.Deployment.psd1" />
-    <Compile Include="ZeroDowntime.Deployment.psm1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\jsonscripts\subscription.roleassignments.json" />
