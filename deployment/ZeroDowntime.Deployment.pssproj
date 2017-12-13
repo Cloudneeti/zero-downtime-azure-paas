@@ -30,15 +30,46 @@
     <Folder Include="artifact\v1\" />
     <Folder Include="artifact\v1\function\" />
     <Folder Include="artifact\v1\webapp\" />
-    <Folder Include="template\" />
-    <Folder Include="template\buildingblock\" />
-    <Folder Include="template\scenario\" />
-    <Folder Include="template\resource\" />
+    <Folder Include="scripts\" />
+    <Folder Include="templates\" />
+    <Folder Include="templates\buildingblocks\" />
+    <Folder Include="templates\buildingblocks\keyvault" />
+    <Folder Include="templates\buildingblocks\monitoring" />
+    <Folder Include="templates\buildingblocks\web" />
+    <Folder Include="templates\resources\" />
+    <Folder Include="templates\resources\microsoft.appinsights" />
+    <Folder Include="templates\resources\microsoft.keyvault" />
+    <Folder Include="templates\resources\microsoft.loganalytics" />
+    <Folder Include="templates\resources\microsoft.storage" />
+    <Folder Include="templates\resources\microsoft.web" />
+    <Folder Include="templates\scenarios\" />
+    <Folder Include="templates\scenarios\operations" />
+    <Folder Include="templates\scenarios\workload" />
+    <Folder Include="scripts\jsonscripts" />
+    <Folder Include="scripts\pshscripts" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ZeroDowntime.Deployment.ps1" />
     <Compile Include="ZeroDowntime.Deployment.psd1" />
     <Compile Include="ZeroDowntime.Deployment.psm1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\azuredeploy.parameters.json" />
+    <Content Include="templates\buildingblocks\keyvault\azuredeploy.json" />
+    <Content Include="templates\buildingblocks\monitoring\azuredeploy.json" />
+    <Content Include="templates\buildingblocks\web\azuredeploy.json" />
+    <Content Include="templates\resources\microsoft.appinsights\components.json" />
+    <Content Include="templates\resources\microsoft.keyvault\secrets.vaults.json" />
+    <Content Include="templates\resources\microsoft.keyvault\vaults.json" />
+    <Content Include="templates\resources\microsoft.loganalytics\workspaces.json" />
+    <Content Include="templates\resources\microsoft.storage\blobstorage-encrypt-httpsonly.json" />
+    <Content Include="templates\resources\microsoft.storage\storage-encrypt-httpsonly.json" />
+    <Content Include="templates\resources\microsoft.web\function.authsettings.json" />
+    <Content Include="templates\resources\microsoft.web\function.connection.json" />
+    <Content Include="templates\resources\microsoft.web\function.package.json" />
+    <Content Include="templates\resources\microsoft.web\functionapp.json" />
+    <Content Include="templates\scenarios\operations\azuredeploy.json" />
+    <Content Include="templates\scenarios\workload\azuredeploy.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
