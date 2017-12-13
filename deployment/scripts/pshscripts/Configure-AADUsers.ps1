@@ -41,7 +41,7 @@ $passwordProfile.Password = $deploymentPassword
 $passwordProfile.ForceChangePasswordNextLogin = $false
 
 ### Create AAD Users
-$actors = @('Alex_SiteAdmin','Debra_NetworkAdmin')
+$actors = @('Alex_SiteAdmin','Kim_NetworkAdmin')
 foreach ($user in $actors) {
     $upn = $user + '@' + $tenantDomain
     Write-Host -ForegroundColor Yellow "`nChecking if $upn exists in AAD."
