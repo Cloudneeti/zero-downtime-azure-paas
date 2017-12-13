@@ -45,6 +45,7 @@
     <Folder Include="templates\scenarios\" />
     <Folder Include="templates\scenarios\operations" />
     <Folder Include="templates\scenarios\workload" />
+    <Folder Include="templates\scenarios\workload\update-resources" />
     <Folder Include="scripts\jsonscripts" />
     <Folder Include="scripts\pshscripts" />
   </ItemGroup>
@@ -70,6 +71,7 @@
     <Content Include="templates\resources\microsoft.web\functionapp.json" />
     <Content Include="templates\scenarios\operations\azuredeploy.json" />
     <Content Include="templates\scenarios\workload\azuredeploy.json" />
+    <Content Include="templates\scenarios\workload\update-resources\azuredeploy.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
