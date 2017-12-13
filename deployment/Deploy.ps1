@@ -388,7 +388,7 @@ else {
     }
 
     ### Create Resource Group for deployment and assigning RBAC to users.
-    $components = @("workload1", "workload2" ,"networking", "operations", "backend")
+    $components = @("artifacts","workload1", "workload2" ,"networking", "operations", "backend")
     $components | ForEach-Object { 
         $rgName = (($deploymentPrefix,$_,'rg') -join '-')
         log "Creating ResourceGroup $rgName at $location."

@@ -339,9 +339,9 @@ function Invoke-ARMDeployment {
     This function publish required scripts and templates to artifacts storage account for deployment.
 #>
 function Publish-BuildingBlocksTemplates ($hash) {
-    $StorageAccount = Get-AzureRmStorageAccount -ResourceGroupName (($resourceGroupPrefix,'workload',$env,'rg') -join '-')  -Name $hash -ErrorAction SilentlyContinue
+    $StorageAccount = Get-AzureRmStorageAccount -ResourceGroupName (($resourceGroupPrefix,'artifacts','rg') -join '-')  -Name $hash -ErrorAction SilentlyContinue
     if (!$StorageAccount) {
-        $StorageAccount = New-AzureRmStorageAccount -ResourceGroupName (($resourceGroupPrefix,'workload',$env,'rg') -join '-') -Name $hash -Type Standard_LRS `
+        $StorageAccount = New-AzureRmStorageAccount -ResourceGroupName (($resourceGroupPrefix,'artifacts','rg') -join '-') -Name $hash -Type Standard_LRS `
             -Location $location -ErrorAction Stop
     }
     $ContainerList = (Get-AzureStorageContainer -Context $StorageAccount.Context | Select-Object -ExpandProperty Name)
@@ -376,26 +376,12 @@ function Get-DeploymentData($hash) {
     $deploymentName = "{0}-{1}-{2}" -f $deploymentPrefix, (Get-Date -Format MMddyyyy), $uniqueDeploymentHash
     $localIP = Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip
     $parametersData = Get-Content "$scriptroot\templates\azuredeploy.parameters.json" | ConvertFrom-Json
-    $parametersData.parameters.environmentReference.value.env = $env
     $parametersData.parameters.environmentReference.value.prefix = $resourceGroupPrefix
     $parametersData.parameters.environmentReference.value._artifactsLocation = 'https://{0}.blob.core.windows.net/' -f $hash
-    $parametersData.parameters.environmentReference.value.adAppClientId = $healthCareAdApplicationClientId
     $parametersData.parameters.environmentReference.value.deploymentPassword = $deploymentPassword
     $parametersData.parameters.environmentReference.value.tenantId = $tenantId
     $parametersData.parameters.environmentReference.value.tenantDomain = $tenantDomain
     $parametersData.parameters.environmentReference.value.location = $location
-    $parametersData.parameters.workloadReference.value.sql.firewallRules[0].startIP = $localIP
-    $parametersData.parameters.workloadReference.value.sql.firewallRules[0].endIP = $localIP
-    $parametersData.parameters.workloadReference.value.sql.sqlADAdministratorSid = $sqlAdAdminObjID
-    $parametersData.parameters.workloadReference.value.sql.tdeKeyUri = $sqlTdeKeyUrl
-    $parametersData.parameters.workloadReference.value.sql.sqlServerKeyName = $sqlServerKeyName
-    $parametersData.parameters.workloadReference.value.keyVault.secretExpirationDate = $unixTimeStamp
-    $parametersData.parameters.workloadReference.value.keyVault.accessPolicies[0].tenantId = $tenantId
-    $parametersData.parameters.workloadReference.value.keyVault.accessPolicies[0].objectId = $siteAdminObjId
-    $parametersData.parameters.workloadReference.value.keyVault.accessPolicies[1].tenantId = $tenantId
-    $parametersData.parameters.workloadReference.value.keyVault.accessPolicies[1].objectId = $healthCareAdServicePrincipalObjectId
-    $parametersData.parameters.workloadReference.value.azureML.predictLengthOfStayServiceEndpoint = $predictLengthOfStayServiceEndpoint
-    $parametersData.parameters.workloadReference.value.azureML.predictLengthOfStayServiceApiKey = $predictLengthOfStayServiceApiKey
     ( $parametersData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $tmp
     $deploymentName, $tmp
 }
