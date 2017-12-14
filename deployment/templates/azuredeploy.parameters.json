@@ -19,7 +19,7 @@
     },
     "frontEndTier": {
       "value": {
-        "function": [
+        "webApp": [
           {
             "name": "ZeroDownTime",
             "serviceName": "zdt",
@@ -33,16 +33,34 @@
       }
     },
     "middleTier": {
-      "metadata": {
-        
-      },
-      "value": ""
+      "value": {
+        "function": [
+          {
+            "name": "ZeroDownTime",
+            "serviceName": "zdt",
+            "hostingPlanServiceName": "zdt",
+            "tags": {
+              "tier": "middle",
+              "serviceName": "zdt"
+            }
+          }
+        ]
+      }
     },
     "backEndTier": {
-      "metadata": {
-        
-      },
-      "value": ""
+      "value": {
+        "cosmosdb": [
+          {
+            "name": "ZeroDownTime",
+            "serviceName": "zdt",
+            "hostingPlanServiceName": "zdt",
+            "tags": {
+              "tier": "backEnd",
+              "serviceName": "zdt"
+            }
+          }
+        ]
+      }
     },
     "operations": {
       "value": {
@@ -57,42 +75,6 @@
           "tags": {
             "tier": "Operations"
           }
-        },
-        "keyVault": {
-          "serviceName": "zdt",
-          "secretExpirationDate": "auto-update",
-          "tags": {
-            "tier": "Operations"
-          },
-          "accessPolicies": [
-            {
-              "tenantId": "auto-update",
-              "objectId": "siteAdminObjectId-auto-update",
-              "permissions": {
-                "keys": [
-                  "get", "list", "create", "update", "import", "delete", "backup", "restore", "recover"
-                ],
-                "secrets": [
-                  "get", "list", "set", "delete", "backup", "restore", "recover"
-                ],
-                "certificates": [
-                  "get", "list", "delete", "create", "import", "update", "managecontacts", "getissuers", "listissuers", "setissuers", "deleteissuers", "manageissuers", "recover"
-                ]
-              }
-            },
-            {
-              "tenantId": "auto-update",
-              "objectId": "AADServicePrincipalObjectId-auto-update",
-              "permissions": {
-                "keys": [
-                  "get", "wrapKey", "unwrapKey", "sign", "verify"
-                ],
-                "secrets": [
-                  "get", "list" 
-                ]
-              }
-            }
-          ]
         }
       }
     }

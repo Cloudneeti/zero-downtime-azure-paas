@@ -129,7 +129,7 @@ Clear-AzureRmContext -Scope CurrentUser -Force
 
 ### Converting deployment prefix to lowercase
 $deploymentprefix = $deploymentprefix.ToLower()
-
+<#
 # Import modules to the session.
 
 log "Unload existing loaded modules, if any.."
@@ -154,7 +154,7 @@ catch {
     Write-Host "Please re-run deploy.ps1 with installModules switch." -foregroundcolor Cyan
     Break
 }
-
+#>
 ### Actors 
 $actors = @('Alex_SiteAdmin','Kim_NetworkAdmin')
 
@@ -347,7 +347,7 @@ else {
     $securePassword = ConvertTo-SecureString $convertedServiceAdminPassword
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword)
     $plainServiceAdminPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-
+<#
     ### Configure AAD User Accounts.
     log "Creating AAD account for solution actors using ServiceAdmin Account."
     try
@@ -386,7 +386,7 @@ else {
         logerror
         Break
     }
-
+#>
     ### Create Resource Group for deployment and assigning RBAC to users.
     $components = @("artifacts","workload1", "workload2" ,"networking", "operations", "backend")
     $components | ForEach-Object { 
@@ -394,7 +394,7 @@ else {
         log "Creating ResourceGroup $rgName at $location."
         New-AzureRmResourceGroup -Name $rgName -Location $location -Force -OutVariable $_
     }
-
+<#
     ### Assign Roles to the Users
     log "Assigning roles to the users."
     $rbactmp = [System.IO.Path]::GetTempFileName()
@@ -403,7 +403,7 @@ else {
     ( $rbacData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $rbactmp
     Update-RoleAssignments -inputFile $rbactmp -prefix $deploymentPrefix -domain $tenantDomain
     Start-Sleep 10
-
+#>
     ### Create PSCredential Object for SiteAdmin
     $siteAdminUserName = "Alex_SiteAdmin@" + $tenantDomain
     $siteAdmincredential = New-Object System.Management.Automation.PSCredential ($siteAdminUserName, $secureDeploymentPassword)
@@ -421,6 +421,32 @@ else {
         break
     }
     Start-Sleep 10
+
+    ### Invoke ARM deployment.
+    log "Intiating Zero Down Time Solution Deployment." Cyan
+    
+    log "Invoke Background Job Deployment for Monitoring Solution - OMS Workspace and Application Insights."
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 1 -prerequisiteRefresh
+
+    # Pause Session for Background Job to Initiate.
+    log "Waiting session for background job to initiate"
+    Start-Sleep 20
+
+    #Get deployment status
+    while ((Get-Job -Name '1-create' | Select-Object -Last 1).State -eq 'Running') {
+        Get-ARMDeploymentStatus -jobName '1-create'
+        Start-Sleep 10
+    }
+    if ((Get-Job -Name '1-create' | Select-Object -Last 1).State -eq 'Completed') 
+    {
+        Get-ARMDeploymentStatus -jobName '1-create'
+    }
+    else
+    {
+        Get-ARMDeploymentStatus -jobName '1-create'
+        log $error[0] -color Red
+        Break
+    }
 <#
     ########### Create Azure Active Directory apps in default directory ###########
     try {
