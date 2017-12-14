@@ -289,3 +289,4 @@ __pycache__/
 
 # Custom exclusion list
 /deployment/output
+deployment/auth.json
