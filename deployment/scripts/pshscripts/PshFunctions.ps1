@@ -354,12 +354,12 @@ function Publish-BuildingBlocksTemplates ($hash) {
             log "Uploaded $($_.FullName) to $($StorageAccount.StorageAccountName)." Yellow
         }
     }
-    Get-ChildItem $scriptroot -Directory -Filter functions | ForEach-Object {
+    Get-ChildItem $scriptroot -Directory -Filter artifacts | ForEach-Object {
         $Directory = $_
         if ( $Directory -notin $ContainerList ) {
             $StorageAccount | New-AzureStorageContainer -Name $Directory.Name -Permission Container -ErrorAction Stop | Out-Null
         }
-        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.zip | ForEach-Object {
+        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.txt | ForEach-Object {
             Set-AzureStorageBlobContent -Context $StorageAccount.Context -Container $Directory.Name -File $_.FullName -Blob $_.FullName.Remove(0,(($Directory).FullName.Length + 1)) -Force -ErrorAction Stop | Out-Null
             log "Uploaded $($_.FullName) to $($StorageAccount.StorageAccountName)." Yellow
         }
