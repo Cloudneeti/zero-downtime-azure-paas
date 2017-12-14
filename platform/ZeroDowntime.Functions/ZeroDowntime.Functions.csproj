@@ -7,7 +7,11 @@
     <FunctionSrcFolder>bin\$(Configuration)\net461</FunctionSrcFolder>
   </PropertyGroup>
   <ItemGroup>    
+    <PackageReference Include="Microsoft.Azure.DocumentDB" Version="1.19.1" />    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZeroDowntime.Core\ZeroDowntime.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -39,7 +43,7 @@
       </Code>
     </Task>
   </UsingTask>
-  <Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
+ <!-- <Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
      <XmlPeek XmlInputPath="App.Local.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
         <Output TaskParameter="Result" ItemName="fever" />
     </XmlPeek>
@@ -50,7 +54,7 @@
     
     <Message Text="Zip Functions" />
     <Zip Src="$(FunctionSrcFolder)" Dest="$(ArtifactsFolder)\$(FunctionsZipName)" />
-  </Target>
+  </Target>-->
   <Target Name="ClearFunctions" BeforeTargets="Build">
     <Message Text="Delete Existing Functions" />
     <Delete Files="$(ArtifactsFolder)\$(FunctionsZipName)" Condition="Exists('$(ArtifactsFolder)\$(FunctionsZipName)')" />
