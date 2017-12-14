@@ -4,7 +4,7 @@
     "parameters": {
         "functionAppName": {
             "type": "string"
-        },       
+        },
         "location": {
             "type": "string"
         },
@@ -13,7 +13,7 @@
         },
         "tags": {
             "type": "object"
-        }        
+        }
     },
     "resources": [
         {

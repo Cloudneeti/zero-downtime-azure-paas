@@ -4,10 +4,10 @@
     "parameters": {
         "hostingPlanName": {
             "type": "string"
-        },        
+        },
         "functionAppName": {
             "type": "string"
-        },       
+        },
         "location": {
             "type": "string"
         },
@@ -20,35 +20,11 @@
         "appInsightsResourceGroup":{
             "type": "string"
         },
-        "adAppClientId":{
-            "type": "string"
-        },
-        "adAppClientPassword":{
-            "type": "string"
-        },
-        "keyVaultUri":{
-            "type": "string"
-        },
-        "tenantDomain":{
-            "type": "string"
-        },        
         "tags": {
             "type": "object"
         }
     },
     "resources": [
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2015-04-01",
-            "name": "[parameters('hostingPlanName')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "name": "[parameters('hostingPlanName')]",
-                "computeMode": "Dynamic",
-                "sku": "Dynamic"
-            },
-            "tags": "[parameters('tags')]"
-        },
         {
             "apiVersion": "2016-03-01",
             "name": "[parameters('functionAppName')]",
@@ -91,23 +67,7 @@
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                             "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
-                        },
-                        {
-                            "name": "ClientId",
-                            "value": "[parameters('adAppClientId')]"
-                        },
-                        {
-                            "name": "ClientSecret",
-                            "value": "[parameters('adAppClientPassword')]"
-                        },
-                        {
-                            "name": "VaultUrl",
-                            "value": "[parameters('keyVaultUri')]"
-                        },
-                        {
-                            "name": "TenantName",
-                            "value": "[parameters('tenantDomain')]"
-                        }                        
+                        }
                     ]
                 }
             }
