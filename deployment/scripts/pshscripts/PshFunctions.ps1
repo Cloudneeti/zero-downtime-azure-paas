@@ -294,8 +294,9 @@ function Invoke-ARMDeployment {
         $deploymentData = Get-DeploymentData $deploymentHash
         $deployments = @{
             1 = @{"name" = "operations"; "rg" = "operations"}
-            2 = @{"name" = "workload"; "rg" = "workload"};
-            3 = @{"name" = "workload\update-resources"; "rg" = "workload"}
+            2 = @{"name" = "workload"; "rg" = "workload$deploymentVersion"};
+            3 = @{"name" = "backend"; "rg" = "backend"};
+            4 = @{"name" = "networking"; "rg" = "networking"}
         }
         foreach ($step in $steps) {
             $importSession = {

@@ -13,6 +13,12 @@
         },
         "defaultExperience": {
             "type": "string"
+        },
+        "pairedLocation": {
+            "type": "string"
+        },
+        "pairedLocationName": {
+            "type": "string"
         }
     },
     "resources": [
@@ -29,10 +35,17 @@
                         "id": "[concat(parameters('name'), '-', parameters('location'))]",
                         "failoverPriority": 0,
                         "locationName": "[parameters('locationName')]"
+                    },
+                    {
+                        "id": "[concat(parameters('name'), '-', parameters('pairedLocation'))]",
+                        "failoverPriority": 1,
+                        "locationName": "[parameters('pairedLocationName')]"
                     }
                 ]
             },
-            "tags": {}
+            "tags": {
+                "defaultExperience": "[parameters('defaultExperience')]"
+            }
         }
     ]
 }

@@ -21,26 +21,23 @@
       "type": "secureObject"
     }
   },
+  "variables": {
+    "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]"
+  },
   "resources": [
     { 
       "apiVersion": "2017-05-10", 
-      "name": "deploy-functionapp", 
+      "name": "deploy-trafficmanager", 
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [],
       "properties": { 
          "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/buildingblocks/web/azuredeploy.json')]",
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/trafficmanager.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": { 
-          "_artifactsLocation": {"value": "[parameters('environmentReference')._artifactsLocation]"},
-          "_artifactsSasToken": {"value": "[parameters('environmentReference')._artifactsLocationSasToken]"},
-          "uniquePrefix": {"value": "[parameters('environmentReference').prefix]"},
-          "functions": {"value": "[parameters('middleTier').function]"},
-          "location": {"value": "[parameters('environmentReference').location]"},
-          "appInsightsServiceName": {"value": "[parameters('operations').appInsights.serviceName]"},
-          "tags": {"value": "[parameters('environmentReference').tags]"}
+        "name":{"value": "[variables('trafficManagerName')]"}
         }
       }
     }

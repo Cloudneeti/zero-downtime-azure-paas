@@ -70,7 +70,34 @@ param
     [Parameter(Mandatory = $false, 
     ParameterSetName = "CleanUp", 
     Position = 7)]
-    [ValidateSet("westus2","westcentralus")]
+    [ValidateSet(
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2",
+        "koreacentral",
+        "koreasouth"
+    )]
 	[Alias("loc")]
     [string]$location = "westcentralus",
 
@@ -81,6 +108,12 @@ param
     [Alias("dpwd")]
     [string]$deploymentPassword = 'null',
 
+    #
+    [Parameter(Mandatory = $false,
+    ParameterSetName = "Deployment",
+    Position = 9)]
+    [string]$deploymentVersion = 'v1',
+
     #Switch to install required modules.
     [Parameter(Mandatory = $true,
     ParameterSetName = "InstallModules")]
@@ -89,7 +122,7 @@ param
     #Switch to cleanup deployment resources from the subscription.
     [Parameter(Mandatory = $true, 
     ParameterSetName = "CleanUp", 
-    Position = 9)]
+    Position = 8)]
     [switch]$clearDeployment
 
 )
@@ -106,6 +139,8 @@ if(! (Test-Path -Path "$(Split-Path $MyInvocation.MyCommand.Path)\output")) {
     New-Item -Path $(Split-Path $MyInvocation.MyCommand.Path) -Name 'output' -ItemType Directory
 }
 $outputFolderPath = "$(Split-Path $MyInvocation.MyCommand.Path)\output"
+
+Start-Transcript -OutputDirectory $outputFolderPath
 
 ### Import custom powershell functions for deployment.
 . $scriptroot\scripts\pshscripts\PshFunctions.ps1
@@ -129,32 +164,7 @@ Clear-AzureRmContext -Scope CurrentUser -Force
 
 ### Converting deployment prefix to lowercase
 $deploymentprefix = $deploymentprefix.ToLower()
-<#
-# Import modules to the session.
 
-log "Unload existing loaded modules, if any.."
-$modules = $requiredModules.Keys
-foreach ($module in $modules){
-    Remove-Module -Name $module -ErrorAction SilentlyContinue
-}
-Start-Sleep 5
-
-log "Trying to import required module in the session."
-try {
-    foreach ($module in $modules){
-        log "Importing module - $module."
-        Import-Module -Name $module -RequiredVersion $requiredModules[$module]
-        if (Get-Module -Name $module) {
-            log "Module - $module imported successfully."
-        }
-    }
-}
-catch {
-    logerror
-    Write-Host "Please re-run deploy.ps1 with installModules switch." -foregroundcolor Cyan
-    Break
-}
-#>
 ### Actors 
 $actors = @('Alex_SiteAdmin','Kim_NetworkAdmin')
 
@@ -175,16 +185,20 @@ Else{
     Break
 }
 
+# components required for creating resourcegroup
+$components = @("artifacts","workload$deploymentVersion","networking", "operations", "backend")
+
 if ($clearDeployment) {
     try {
         log "Looking for Resources to Delete.." Magenta
         log "List of deployment resources for deletion" -displaywithouttimestamp
 
         #List The Resource Group
-        $resourceGroupList =@(
-            (($deploymentPrefix, 'monitoring', $environment, 'rg') -join '-'),
-            (($deploymentPrefix, 'workload', $environment, 'rg') -join '-')
-        )
+        $resourceGroupList =@()
+        $components | ForEach-Object { 
+            $resourceGroupList += (($deploymentPrefix,$_,'rg') -join '-')
+        }
+
         log "Resource Groups: " Cyan -displaywithouttimestamp
         $resourceGroupList | ForEach-Object {
             $resourceGroupName = $_
@@ -252,10 +266,6 @@ if ($clearDeployment) {
                 # Remove ResourceGroups
                 if ($rgCount -eq 1)
                 {
-                $resourceGroupList =@(
-                    (($deploymentPrefix, 'monitoring', $environment, 'rg') -join '-'),
-                    (($deploymentPrefix, 'workload', $environment, 'rg') -join '-')
-                )
                 $resourceGroupList | ForEach-Object { 
                     $resourceGroupName = $_
                     Get-AzureRmResourceGroup -Name $resourceGroupName | Out-Null
@@ -388,7 +398,6 @@ else {
     }
 #>
     ### Create Resource Group for deployment and assigning RBAC to users.
-    $components = @("artifacts","workload1", "workload2" ,"networking", "operations", "backend")
     $components | ForEach-Object { 
         $rgName = (($deploymentPrefix,$_,'rg') -join '-')
         log "Creating ResourceGroup $rgName at $location."
@@ -447,6 +456,46 @@ else {
         log $error[0] -color Red
         Break
     }
+
+    log "Invoke Workload deployment."
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 2 -prerequisiteRefresh
+
+    # Pause Session for Background Job to Initiate.
+    log "Waiting for background job to initiate"
+    Start-Sleep 20
+
+    #Get deployment status
+    while ((Get-Job -Name '2-create' | Select-Object -Last 1).State -eq 'Running') {
+        Get-ARMDeploymentStatus -jobName '2-create'
+        Start-Sleep 5
+    }
+    
+    log "Invoke Backend deployment."
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 3
+
+    # Pause Session for Background Job to Initiate.
+    log "Waiting for background job to initiate"
+    Start-Sleep 20
+
+    #Get deployment status
+    while ((Get-Job -Name '3-create' | Select-Object -Last 1).State -eq 'Running') {
+        Get-ARMDeploymentStatus -jobName '3-create'
+        Start-Sleep 5
+    }
+
+    log "Invoke Network deployment."
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 4
+
+    # Pause Session for Background Job to Initiate.
+    log "Waiting for background job to initiate"
+    Start-Sleep 20
+
+    #Get deployment status
+    while ((Get-Job -Name '4-create' | Select-Object -Last 1).State -eq 'Running') {
+        Get-ARMDeploymentStatus -jobName '4-create'
+        Start-Sleep 5
+    }    
+
 <#
     ########### Create Azure Active Directory apps in default directory ###########
     try {
@@ -609,5 +658,6 @@ else {
     }
 
 #>
+ Stop-Transcript
 }
 #### END OF SCRIPT ###

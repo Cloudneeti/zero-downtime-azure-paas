@@ -21,11 +21,11 @@
       "value": {
         "webApp": [
           {
-            "name": "ZeroDownTime",
+            "name": "frontend",
             "serviceName": "zdt",
             "hostingPlanServiceName": "zdt",
             "tags": {
-              "tier": "frontEnd",
+              "tier": "frontend",
               "serviceName": "zdt"
             }
           }
@@ -34,32 +34,31 @@
     },
     "middleTier": {
       "value": {
-        "function": [
-          {
-            "name": "ZeroDownTime",
-            "serviceName": "zdt",
-            "hostingPlanServiceName": "zdt",
-            "tags": {
-              "tier": "middle",
-              "serviceName": "zdt"
-            }
+        "function": {
+          "name": "middletier",
+          "serviceName": "zdt",
+          "hostingPlanServiceName": "zdt",
+          "tags": {
+            "tier": "middle",
+            "serviceName": "zdt"
           }
-        ]
+        }
       }
     },
     "backEndTier": {
       "value": {
-        "cosmosdb": [
-          {
-            "name": "ZeroDownTime",
-            "serviceName": "zdt",
-            "hostingPlanServiceName": "zdt",
-            "tags": {
-              "tier": "backEnd",
-              "serviceName": "zdt"
-            }
-          }
-        ]
+        "cosmosdb": {
+          "name": "backend",
+          "serviceName": "zdt",
+          "tags": {
+            "tier": "backend",
+            "serviceName": "zdt"
+          },
+          "locationName": "East US",
+          "defaultExperience": "DocumentDB",
+          "pairedLocation": "westus",
+          "pairedLocationName": "West US"
+        }
       }
     },
     "operations": {
@@ -67,13 +66,23 @@
         "appInsights":{
           "serviceName": "zdt",
           "tags": {
-            "tier": "Operations"
+            "tier": "operations"
           }
         },
         "logAnalytics" :{
           "serviceName": "zdt",
           "tags": {
-            "tier": "Operations"
+            "tier": "pperations"
+          }
+        }
+      }
+    },
+    "network": {
+      "value": {
+        "trafficManager": {
+          "serviceName": "zdt",
+          "tags": {
+            "tier": "network"
           }
         }
       }

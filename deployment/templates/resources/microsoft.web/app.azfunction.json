@@ -30,9 +30,6 @@
             "name": "[parameters('functionAppName')]",
             "type": "Microsoft.Web/sites",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
-            ],
             "kind": "functionapp",
             "tags": "[parameters('tags')]",
             "properties": {

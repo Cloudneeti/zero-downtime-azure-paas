@@ -5,9 +5,6 @@
         "name": {
             "type": "string"
         },
-        "relativeName": {
-            "type": "string"
-        },
         "trafficRoutingMethod": {
             "type": "string",
             "defaultValue": "Performance",
@@ -26,9 +23,10 @@
             "name": "[parameters('name')]",
             "location": "global",
             "properties": {
+                "profileStatus": "Enabled",
                 "trafficRoutingMethod": "[parameters('trafficRoutingMethod')]",
                 "dnsConfig": {
-                    "relativeName": "[parameters('relativeName')]",
+                    "relativeName": "[parameters('name')]",
                     "ttl": 300
                 },
                 "monitorConfig": {
