@@ -1,12 +1,13 @@
 namespace ZeroDowntime.Functions
 {
-    using System.Linq;
+    using ZeroDowntime.Core;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
+    using System.Collections.Generic;
 
     /// <summary>
     /// azure function that access data from cosmos db
@@ -19,20 +20,28 @@ namespace ZeroDowntime.Functions
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            // parse query parameter
-            string name = req.GetQueryNameValuePairs()
-                .FirstOrDefault(q => string.Compare(q.Key, "name", true) == 0)
-                .Value;
+            string endpoint = "https://zerodowntime.documents.azure.com:443/";
+            string authkey = "HwTXewPtEtzWrTDlUq9OFM3zEqG4z0IFGqFw863OCloueIXm9We84NJN07jHC6Vsg9mSl64nQmiqcWBCAspwlw==";
+            //string  endpoint = ConfigurationManager.AppSettings["endpoint"];
+            //string  authKey = ConfigurationManager.AppSettings["authkey"];
+            DocumentDBRepository<Item>.Initialize(endpoint, authkey);
+            if (req.Method == HttpMethod.Get)
+            {
+                var results = await DocumentDBRepository<Item>.GetItemsAsync("ToDoList", "Items");
+                return req.CreateResponse(HttpStatusCode.OK, results);
 
-            // Get request body
-            dynamic data = await req.Content.ReadAsAsync<object>();
-
-            // Set name to query string or body data
-            name = name ?? data?.name;
-
-            return name == null
-                ? req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a name on the query string or in the request body")
-                : req.CreateResponse(HttpStatusCode.OK, "Hello " + name);
+            }
+            else
+            {
+                dynamic data = await req.Content.ReadAsAsync<object>();
+                string name = data?.name;
+                string description = data?.description;
+                Item item = new Item();
+                item.Name = name;
+                item.Description = description;
+                await DocumentDBRepository<Item>.CreateItemAsync(item, "ToDoList", "Items");
+                return req.CreateResponse(HttpStatusCode.Created);
+            }
         }
     }
 }

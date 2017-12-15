@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ZeroDowntime.Models;
+using Newtonsoft.Json;
 
 namespace ZeroDowntime.WebApp.Controllers
 {
@@ -12,7 +13,11 @@ namespace ZeroDowntime.WebApp.Controllers
         // GET: Item
         public ActionResult Index()
         {
-            return View();
+            var response = async()=> {
+                await HttpHelper.GetAsync("https://zerodowntime.azurewebsites.net/api/CosmosDataAccessFunc", "wXhNlbWKGHXD/eowPMHWdm8aZL0zGCOCkSy/ABJJZGrUWEdTwzppkA==")};
+
+            var item = JsonConvert.DeserializeObject<Item>(response);
+            return View(item);
         }
 
         [ActionName("Create")]
