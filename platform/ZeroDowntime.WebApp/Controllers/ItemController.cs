@@ -13,11 +13,10 @@ namespace ZeroDowntime.WebApp.Controllers
         // GET: Item
         public ActionResult Index()
         {
-            var response = async()=> {
-                await HttpHelper.GetAsync("https://zerodowntime.azurewebsites.net/api/CosmosDataAccessFunc", "wXhNlbWKGHXD/eowPMHWdm8aZL0zGCOCkSy/ABJJZGrUWEdTwzppkA==")};
+            var response = HttpHelper.GetAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc", "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==").Result;
 
-            var item = JsonConvert.DeserializeObject<Item>(response);
-            return View(item);
+            Item[] items = JsonConvert.DeserializeObject<Item[]>(response);
+            return View();
         }
 
         [ActionName("Create")]
