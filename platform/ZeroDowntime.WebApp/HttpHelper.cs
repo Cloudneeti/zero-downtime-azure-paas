@@ -50,9 +50,9 @@ namespace ZeroDowntime.WebApp
         public static async Task<string> GetAsync(string requestUri,string apiKey)
         {
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
  
-            var response = await httpClient.GetAsync(requestUri); 
+            var response = await httpClient.GetAsync(requestUri+"?code="+apiKey); 
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsStringAsync();

@@ -20,8 +20,8 @@ namespace ZeroDowntime.Functions
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            string endpoint = "https://zerodowntime.documents.azure.com:443/";
-            string authkey = "HwTXewPtEtzWrTDlUq9OFM3zEqG4z0IFGqFw863OCloueIXm9We84NJN07jHC6Vsg9mSl64nQmiqcWBCAspwlw==";
+            string endpoint = "https://zdcosmosdb.documents.azure.com:443/";
+            string authkey = "8eIG2CLmqhjBLDWAOv9II2zLoY65WxOwKnmShyYq1I3TZStzRHIFejWIgczFvC2zi2SmTcEtr1mtpTNFdBdyXw==";
             //string  endpoint = ConfigurationManager.AppSettings["endpoint"];
             //string  authKey = ConfigurationManager.AppSettings["authkey"];
             DocumentDBRepository<Item>.Initialize(endpoint, authkey);
