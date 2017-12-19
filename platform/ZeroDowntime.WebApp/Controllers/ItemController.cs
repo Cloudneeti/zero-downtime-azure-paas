@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,10 +14,17 @@ namespace ZeroDowntime.WebApp.Controllers
         // GET: Item
         public ActionResult Index()
         {
-            var response = HttpHelper.GetAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc", "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==").Result;
+            string response = null;
+            Task.Run(
+                async()=> {
+                    response = await HttpHelper.GetAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc",
+                        "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==");
+                }).Wait();
 
             Item[] items = JsonConvert.DeserializeObject<Item[]>(response);
-            return View();
+
+            //var items = new Item[] { new Item {Id="01",Description="tewst",Name="asdsds" } };
+            return View(items);
         }
 
         [ActionName("Create")]
