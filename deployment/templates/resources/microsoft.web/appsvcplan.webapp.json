@@ -10,19 +10,6 @@
         "description": "Name of AppSvc Plan."
       }
     },
-    "webAppSvcPlanSku": {
-      "type": "string",
-      "allowedValues": [
-        "Free",
-        "Shared",
-        "Basic",
-        "Standard"
-      ],
-      "defaultValue": "Basic",
-      "metadata": {
-        "description": "App Svc Plan SKU."
-      }
-    },
     "webAppSvcPlanWorkerSize": {
       "type": "string",
       "allowedValues": [
@@ -41,17 +28,20 @@
   },
   "resources": [
     {
-      "name": "[parameters('WebAppSvcPlanName')]",
+      "name": "[parameters('hostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2015-08-01",
       "dependsOn": [],
-      "tags": "[parameters('tags')]",
       "properties": {
-        "name": "[parameters('WebAppSvcPlanName')]",
-        "sku": "[parameters('WebAppSvcPlanSKU')]",
+        "name": "[parameters('hostingPlanName')]",
         "workerSize": "[parameters('WebAppSvcPlanWorkerSize')]",
         "numberOfWorkers": 1
+      },
+      "sku": {
+        "name": "F1",
+        "tier": "Free",
+        "capacity": "1"
       }
     }
   ],

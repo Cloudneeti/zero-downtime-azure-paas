@@ -158,7 +158,7 @@
             "value": "[parameters('location')]"
           },
           "DeployPackageURI": {
-            "value": "[concat(parameters('_artifactsLocation'),'/',parameters('webApp').deploymentVersion,'/function')]"
+            "value": "[concat(parameters('_artifactsLocation'),'/artifacts/',parameters('webApp').deploymentVersion,'/webapp')]"
           },
           "appInsightsName": {
             "value": "[variables('appInsightName')]"

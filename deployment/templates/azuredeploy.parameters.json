@@ -73,7 +73,7 @@
         "logAnalytics" :{
           "serviceName": "zdt",
           "tags": {
-            "tier": "pperations"
+            "tier": "operations"
           }
         }
       }
