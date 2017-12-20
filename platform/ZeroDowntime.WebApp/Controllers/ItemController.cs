@@ -16,11 +16,10 @@ namespace ZeroDowntime.WebApp.Controllers
         public ActionResult Index()
         {
             string response = null;
-            ViewBag.version = ConfigurationManager.AppSettings["version"];
+            ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
             Task.Run(
                 async()=> {
-                    response = await HttpHelper.GetAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc",
-                        "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==");
+                    response = await HttpHelper.GetAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc","SvmMZbs8nmcGhlcO0vmG1a6LB9WSFRekMfFWyM6aP7AJQpv8SiD4CA==");
                 }).Wait();
 
             Item[] items = JsonConvert.DeserializeObject<Item[]>(response);
@@ -32,7 +31,7 @@ namespace ZeroDowntime.WebApp.Controllers
         [ActionName("Create")]
         public ActionResult CreateAsync()
         {
-            ViewBag.version = ConfigurationManager.AppSettings["version"];
+            ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
             return View();
         }
 
@@ -41,13 +40,14 @@ namespace ZeroDowntime.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreateAsync([Bind(Include = "Id,Name,Description")] Item item)
         {
-            ViewBag.version = ConfigurationManager.AppSettings["version"];
+            ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
             string response = null;
            var jsonItem = JsonConvert.SerializeObject(item);
            Task.Run(
            async () => {
-               response = await HttpHelper.PostAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc",
-                   "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==", jsonItem);
+               ////response = await HttpHelper.PostAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc",
+               //    "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==", jsonItem);
+               response = await HttpHelper.PostAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc","SvmMZbs8nmcGhlcO0vmG1a6LB9WSFRekMfFWyM6aP7AJQpv8SiD4CA==", jsonItem);
            }).Wait();
 
             if (ModelState.IsValid)
