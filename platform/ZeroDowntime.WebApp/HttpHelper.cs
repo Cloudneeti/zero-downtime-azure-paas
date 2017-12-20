@@ -27,11 +27,11 @@ namespace ZeroDowntime.WebApp
         public static async Task<string> PostAsync(string requestUri, string apiKey, string postBody)
         {
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
             var httpContent = new StringContent(postBody, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(requestUri, httpContent);
+            var response = await httpClient.PostAsync(requestUri + "?code=" + apiKey, httpContent);
 
             if (response.IsSuccessStatusCode)
             {
