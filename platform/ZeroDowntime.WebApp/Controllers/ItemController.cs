@@ -38,10 +38,10 @@ namespace ZeroDowntime.WebApp.Controllers
         [HttpPost]
         [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateAsync([Bind(Include = "Id,Name,Description")] Item item)
+        public ActionResult CreateAsync([Bind(Include = "Id,Name,Description,Summary")] Item item)
         {
-            ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
-            string response = null;
+           ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
+           string response = null;
            var jsonItem = JsonConvert.SerializeObject(item);
            Task.Run(
            async () => {

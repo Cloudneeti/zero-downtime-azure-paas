@@ -37,9 +37,11 @@ namespace ZeroDowntime.Functions
                 dynamic data = await req.Content.ReadAsAsync<object>();
                 string name = data?.name;
                 string description = data?.description;
+                string summary = data?.summary;
                 Item item = new Item();
                 item.Name = name;
                 item.Description = description;
+                item.Summary = summary;
                 await DocumentDBRepository<Item>.CreateItemAsync(item, "ToDoList", "Items");
                 return req.CreateResponse(HttpStatusCode.Created);
             }

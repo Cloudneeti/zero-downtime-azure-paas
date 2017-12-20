@@ -14,7 +14,12 @@ namespace ZeroDowntime.Core
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [JsonProperty(PropertyName = "summary")]
+        public string Summary { get; set; }
+
         [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
+
+
     }
 }
