@@ -8,6 +8,7 @@ namespace ZeroDowntime.Functions
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
     using System.Collections.Generic;
+    using System.Configuration;
 
     /// <summary>
     /// azure function that access data from cosmos db
@@ -20,11 +21,11 @@ namespace ZeroDowntime.Functions
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            string endpoint = "https://zdcosmosdb.documents.azure.com:443/";
-            string authkey = "8eIG2CLmqhjBLDWAOv9II2zLoY65WxOwKnmShyYq1I3TZStzRHIFejWIgczFvC2zi2SmTcEtr1mtpTNFdBdyXw==";
-            //string  endpoint = ConfigurationManager.AppSettings["endpoint"];
-            //string  authKey = ConfigurationManager.AppSettings["authkey"];
-            DocumentDBRepository<Item>.Initialize(endpoint, authkey);
+            //string endpoint = "https://zdcosmosdb.documents.azure.com:443/";
+            //string authkey = "8eIG2CLmqhjBLDWAOv9II2zLoY65WxOwKnmShyYq1I3TZStzRHIFejWIgczFvC2zi2SmTcEtr1mtpTNFdBdyXw==";
+            string  endpoint = ConfigurationManager.AppSettings["endpoint"];
+            string  authKey = ConfigurationManager.AppSettings["authkey"];
+            DocumentDBRepository<Item>.Initialize(endpoint, authKey);
             if (req.Method == HttpMethod.Get)
             {
                 var results = await DocumentDBRepository<Item>.GetItemsAsync("ToDoList", "Items");
