@@ -111,6 +111,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\nbme-frontend - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\zdversionone - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\zdversiontwo - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\zerodowntime - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
