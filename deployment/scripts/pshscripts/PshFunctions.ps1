@@ -297,7 +297,7 @@ function Invoke-ARMDeployment {
         $deploymentData = Get-DeploymentData $deploymentHash
         $deployments = @{
             1 = @{"name" = "operations"; "rg" = "operations"}
-            2 = @{"name" = "workload"; "rg" = "workload$deploymentVersion"};
+            2 = @{"name" = "workload-$packageVersion"; "rg" = "workload$deploymentVersion"};
             3 = @{"name" = "backend"; "rg" = "backend"};
             4 = @{"name" = "networking"; "rg" = "networking"}
         }
