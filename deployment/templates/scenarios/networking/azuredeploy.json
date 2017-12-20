@@ -22,22 +22,44 @@
     }
   },
   "variables": {
-    "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]"
+    "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]",
+    "appGatewayName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-agt'))]",
+    "vnetName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-vnet'))]",
+    "publicIpName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-pip'))]",
+    "webAppUrl": "[toLower(concat('http://',concat(parameters('network').appGateway.webAppName,'.azurewebsites.net')))]"
   },
   "resources": [
-    { 
-      "apiVersion": "2017-05-10", 
-      "name": "deploy-trafficmanager", 
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-trafficmanager",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [],
-      "properties": { 
-         "mode": "Incremental",
+      "properties": {
+        "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/trafficmanager.json')]",
           "contentVersion": "1.0.0.0"
         },
-        "parameters": { 
-        "name":{"value": "[variables('trafficManagerName')]"}
+        "parameters": {
+          "name": { "value": "[variables('trafficManagerName')]" }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-06-01",
+      "name": "deploy-appgateway",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/appgateway.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appGateWayName": { "value": "[variables('appGatewayName')]" },
+          "vnetName": { "value": "[variables('vnetName')]" },
+          "publicIpName": {"value": "[variables('publicIpName')]"}
         }
       }
     }
