@@ -275,6 +275,9 @@ function Invoke-ARMDeployment {
             Position = 2)]
         [string]$location,
 
+		[Parameter(Mandatory=$true,ValueFromPipelineByPropertyName = $true,Position=3)]
+		[string]$packageVersion,
+
         [Parameter(Mandatory = $true,
         ValueFromPipelineByPropertyName = $true,
         Position = 4)]
@@ -382,6 +385,7 @@ function Get-DeploymentData($hash) {
     $parametersData.parameters.environmentReference.value.tenantId = $tenantId
     $parametersData.parameters.environmentReference.value.tenantDomain = $tenantDomain
     $parametersData.parameters.environmentReference.value.location = $location
+	$parametersData.parameters.environmentReference.value.packageVersion = $packageVersion
     ( $parametersData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $tmp
     $deploymentName, $tmp
 }

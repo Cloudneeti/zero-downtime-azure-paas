@@ -171,7 +171,7 @@
     </XmlPeek>
     <Message Text="Target Artifact version: @(fever)" Importance="high" />
     <PropertyGroup>
-      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\webapp</ArtifactsFolder>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(fever)\webapp</ArtifactsFolder>
     </PropertyGroup>
     <Message Text="Zip Web App" />
     <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />

@@ -45,7 +45,7 @@
     </XmlPeek>
     <Message Text="Target Artifact version: @(fever)" Importance="high" />
     <PropertyGroup>
-      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\function</ArtifactsFolder>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(fever)\function</ArtifactsFolder>
     </PropertyGroup>
     
     <Message Text="Zip Functions" />

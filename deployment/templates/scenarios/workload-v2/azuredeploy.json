@@ -1,0 +1,49 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentReference": {
+      "type": "secureObject"
+    },
+    "frontEndTier": {
+      "type": "secureObject"
+    },
+    "middleTier": {
+      "type": "secureObject"
+    },
+    "backEndTier": {
+      "type": "secureObject"
+    },
+    "operations": {
+      "type": "secureObject"
+    },
+    "network": {
+      "type": "secureObject"
+    }
+  },
+  "resources": [
+    { 
+      "apiVersion": "2017-05-10", 
+      "name": "deploy-functionapp", 
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [],
+      "properties": { 
+         "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/buildingblocks/web/azuredeploy.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": { 
+          "_artifactsLocation": {"value": "[parameters('environmentReference')._artifactsLocation]"},
+          "_artifactsSasToken": {"value": "[parameters('environmentReference')._artifactsLocationSasToken]"},
+          "uniquePrefix": {"value": "[parameters('environmentReference').prefix]"},
+          "functions": {"value": "[parameters('middleTier').function]"},
+          "location": {"value": "[parameters('environmentReference').location]"},
+          "appInsightsServiceName": {"value": "[parameters('operations').appInsights.serviceName]"},
+          "tags": {"value": "[parameters('environmentReference').tags]"}
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
