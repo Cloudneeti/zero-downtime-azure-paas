@@ -50,7 +50,6 @@ namespace ZeroDowntime.WebApp
         public static async Task<string> GetAsync(string requestUri)
         {
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
  
             var response = await httpClient.GetAsync(requestUri); 
             if (response.IsSuccessStatusCode)
