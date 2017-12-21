@@ -202,17 +202,17 @@
       ]]></Code>
     </Task>
   </UsingTask>
-  <!--<Target Name="ZipWebApp" AfterTargets="Build">
+  <Target Name="ZipWebApp" AfterTargets="Build">
     <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='WebAppVersion']/@value">
       <Output TaskParameter="Result" ItemName="fever" />
     </XmlPeek>
     <Message Text="Target Artifact version: @(fever)" Importance="high" />
     <PropertyGroup>
-      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\webapp</ArtifactsFolder>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(fever)\webapp</ArtifactsFolder>
     </PropertyGroup>
     <Message Text="Zip Web App" />
     <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />
-  </Target>-->
+  </Target>
   <Target Name="ClearFunctions" BeforeTargets="Build">
     <Message Text="Delete Existing Web App" />
     <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
