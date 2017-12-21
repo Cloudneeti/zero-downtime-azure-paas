@@ -26,7 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="artifact\" />
+    <Folder Include="artifacts\" />
     <Folder Include="artifacts\v1\" />
     <Folder Include="artifacts\v1\function\" />
     <Folder Include="artifacts\v1\webapp\" />
@@ -36,8 +36,6 @@
     <Folder Include="scripts\" />
     <Folder Include="templates\" />
     <Folder Include="templates\buildingblocks\" />
-    <Folder Include="templates\buildingblocks\keyvault" />
-    <Folder Include="templates\buildingblocks\monitoring" />
     <Folder Include="templates\buildingblocks\web" />
     <Folder Include="templates\resources\" />
     <Folder Include="templates\resources\microsoft.appinsights" />
@@ -62,8 +60,6 @@
   <ItemGroup>
     <Content Include="scripts\jsonscripts\subscription.roleassignments.json" />
     <Content Include="templates\azuredeploy.parameters.json" />
-    <Content Include="templates\buildingblocks\keyvault\azuredeploy.json" />
-    <Content Include="templates\buildingblocks\monitoring\azuredeploy.json" />
     <Content Include="templates\buildingblocks\web\azuredeploy.json" />
     <Content Include="templates\resources\microsoft.appinsights\components.json" />
     <Content Include="templates\resources\microsoft.keyvault\secrets.vaults.json" />
