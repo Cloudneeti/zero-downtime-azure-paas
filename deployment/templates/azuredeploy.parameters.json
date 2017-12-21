@@ -24,7 +24,8 @@
           {
             "name": "frontend",
             "serviceName": "zdt",
-            "hostingPlanServiceName": "zdt",
+            "hostingPlanServiceName": "frondendzdt",
+            "deploymentVersion": "v1",
             "tags": {
               "tier": "frontend",
               "serviceName": "zdt"
@@ -38,7 +39,7 @@
         "function": {
           "name": "middletier",
           "serviceName": "zdt",
-          "hostingPlanServiceName": "zdt",
+          "hostingPlanServiceName": "middletierzdt",
           "tags": {
             "tier": "middle",
             "serviceName": "zdt"
@@ -73,7 +74,7 @@
         "logAnalytics" :{
           "serviceName": "zdt",
           "tags": {
-            "tier": "pperations"
+            "tier": "operations"
           }
         }
       }
