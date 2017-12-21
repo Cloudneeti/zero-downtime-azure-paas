@@ -109,11 +109,11 @@ param
     [string]$deploymentPassword = 'null',
 
     #
-    [Parameter(Mandatory = $false,
+    [Parameter(Mandatory = $true,
     ParameterSetName = "Deployment",
     Position = 9)]
 	[ValidateSet("v1","v2")]
-    [string]$packageVersion = 'v1',
+    [string]$packageVersion,
 
     #Switch to install required modules.
     [Parameter(Mandatory = $true,
@@ -459,7 +459,7 @@ else {
     }
 
     log "Invoke Workload deployment."
-    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -packageVersion $packageVersion  -steps 2 -prerequisiteRefresh
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -packageVersion $packageVersion  -steps 2
 
     # Pause Session for Background Job to Initiate.
     log "Waiting for background job to initiate"

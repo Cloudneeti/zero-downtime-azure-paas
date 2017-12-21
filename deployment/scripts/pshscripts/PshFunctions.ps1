@@ -363,7 +363,7 @@ function Publish-BuildingBlocksTemplates ($hash) {
         if ( $Directory -notin $ContainerList ) {
             $StorageAccount | New-AzureStorageContainer -Name $Directory.Name -Permission Container -ErrorAction Stop | Out-Null
         }
-        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.txt | ForEach-Object {
+        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.zip | ForEach-Object {
             Set-AzureStorageBlobContent -Context $StorageAccount.Context -Container $Directory.Name -File $_.FullName -Blob $_.FullName.Remove(0,(($Directory).FullName.Length + 1)) -Force -ErrorAction Stop | Out-Null
             log "Uploaded $($_.FullName) to $($StorageAccount.StorageAccountName)." Yellow
         }
