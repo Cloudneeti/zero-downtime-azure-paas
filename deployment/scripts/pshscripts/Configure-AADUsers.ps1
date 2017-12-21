@@ -25,7 +25,7 @@ param
 )
 
 ### Manage Session Configuration
-$Host.UI.RawUI.WindowTitle = "NMBE - Configure AAD Users"
+$Host.UI.RawUI.WindowTitle = "NBME - Configure AAD Users"
 $ErrorActionPreference = 'Stop'
 $WarningPreference = 'Continue'
 Set-StrictMode -Version 3
@@ -41,7 +41,7 @@ $passwordProfile.Password = $deploymentPassword
 $passwordProfile.ForceChangePasswordNextLogin = $false
 
 ### Create AAD Users
-$actors = @('Alex_SiteAdmin','Debra_NetworkAdmin')
+$actors = @('Alex_SiteAdmin','Kim_NetworkAdmin')
 foreach ($user in $actors) {
     $upn = $user + '@' + $tenantDomain
     Write-Host -ForegroundColor Yellow "`nChecking if $upn exists in AAD."
@@ -69,4 +69,4 @@ foreach ($user in $actors) {
         Get-AzureADUser -SearchString $upn | Set-AzureADUser -PasswordProfile $passwordProfile
     }
 }
-Write-Host -ForegroundColor Cyan "AAD Users provisioned successfully. You can close this Powershell window and press Enter on 'NMBE - Zero DownTime Deployment' to continue deployment."
+Write-Host -ForegroundColor Cyan "AAD Users provisioned successfully. You can close this Powershell window and press Enter on 'NBME - Zero DownTime Deployment' to continue deployment."

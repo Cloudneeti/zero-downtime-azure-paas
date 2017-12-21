@@ -5,34 +5,80 @@
     "environmentReference": {
       "type": "secureObject"
     },
-    "workloadReference": {
+    "frontEndTier": {
       "type": "secureObject"
     },
-    "monitoring": {
+    "middleTier": {
+      "type": "secureObject"
+    },
+    "backEndTier": {
+      "type": "secureObject"
+    },
+    "operations": {
+      "type": "secureObject"
+    },
+    "network": {
       "type": "secureObject"
     }
   },
+  "variables": {
+    "workspaceName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('operations').logAnalytics.serviceName,'-analytics'))]",
+    "appInsightsName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('operations').appInsights.serviceName,'-appinsights'))]",
+    "solutionNames": [
+      "AzureWebAppsAnalytics",
+      "ChangeTracking",
+      "KeyVaultAnalytics",
+      "Security",
+      "ApplicationInsights",
+      "AzureActivity",
+      "SecurityCenterFree"
+    ]
+  },  
   "resources": [ 
-    { 
-      "apiVersion": "2017-05-10", 
-      "name": "deploy-monitoring-solution", 
-      "type": "Microsoft.Resources/deployments", 
-      "properties": { 
+    {
+      "apiVersion": "2017-05-10",
+      "name": "oms-workspaces",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/buildingblocks/monitoring/azuredeploy.json')]",
-          "contentVersion": "1.0.0.0"
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.loganalytics/omsworkspaces.json')]"
         },
-        "parameters": { 
-          "_artifactsLocation":{"value": "[parameters('environmentReference')._artifactsLocation]"}, 
-          "_artifactsSasToken":{"value": "[parameters('environmentReference')._artifactsLocationSasToken]"},
-          "uniquePrefix":{"value": "[parameters('environmentReference').prefix]"},
-          "appInsightsServiceName":{"value": "[parameters('monitoring').appInsights.serviceName]"},
-          "logAnalyticsServiceName":{"value": "[parameters('monitoring').logAnalytics.serviceName]"},
-          "environment":{"value": "[parameters('environmentReference').env]"},
-          "location":{"value": "[parameters('environmentReference').location]"},
-          "omsTags": {"value": "[union(parameters('environmentReference').tags, parameters('monitoring').logAnalytics.tags)]"},
-          "appInsightsTags": {"value": "[union(parameters('environmentReference').tags, parameters('monitoring').appInsights.tags)]"}
+        "parameters": {
+          "omsWorkspaceName": {
+            "value": "[variables('workspaceName')]"
+          },
+          "omsSolutionsName":{
+            "value": "[variables('solutionNames')]"
+          },
+          "tags": {
+            "value": "[union(parameters('environmentReference').tags, parameters('operations').logAnalytics.tags)]"
+          },
+          "sku": {
+            "value": "PerNode"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "appInsights",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.appinsights/appinsights.json')]"
+        },
+        "parameters": {
+          "appName": {
+            "value": "[variables('appInsightsName')]"
+          },
+          "tags": {
+            "value": "[union(parameters('environmentReference').tags, parameters('operations').appInsights.tags)]"
+          },
+          "priceCode": {
+            "value": 2
+          }
         }
       }
     }

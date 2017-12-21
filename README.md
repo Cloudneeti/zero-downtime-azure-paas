@@ -2,13 +2,13 @@
 Zero downtime POC using Azure PaaS Services
 
 ### Design
-- [ ] Create the zero downtime architecture reference diagram.
+- [x] Create the zero downtime architecture reference diagram.
 - [ ] document the diagram, reference links and description in design wiki page.
 
 ### Development
-- [ ] Setup repository
-- [ ] create development branch
-- [ ] create project structure
+- [x] Setup repository
+- [x] create development branch
+- [x] create project structure
 - [ ] setup asp.net web app (front end)
 - [ ] setup azure function (middle end)
 - [ ] setup azure cosmos db (back end)
@@ -21,7 +21,7 @@ Zero downtime POC using Azure PaaS Services
 - [ ] setup cleanup using powershell
 
 ### Documentation
-- [ ] create wiki pages for following
+- [x] create wiki pages for following
 
 		- ZD-Design (design, architecture and references)
 		- ZD-System Configuration (configuration for different components)

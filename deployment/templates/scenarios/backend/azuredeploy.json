@@ -1,0 +1,51 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentReference": {
+      "type": "secureObject"
+    },
+    "frontEndTier": {
+      "type": "secureObject"
+    },
+    "middleTier": {
+      "type": "secureObject"
+    },
+    "backEndTier": {
+      "type": "secureObject"
+    },
+    "operations": {
+      "type": "secureObject"
+    },
+    "network": {
+      "type": "secureObject"
+    }
+  },
+  "variables": {
+    "cosmosDbName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('backEndTier').cosmosdb.serviceName,'-cmdb'))]"
+  },
+  "resources": [
+    { 
+      "apiVersion": "2017-05-10", 
+      "name": "deploy-cosmosdb", 
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [],
+      "properties": { 
+         "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.documentdb/cosmosdb.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": { 
+          "name":{"value": "[variables('cosmosDbName')]"},
+          "location":{"value": "[parameters('environmentReference').location]"},
+          "locationName": {"value": "[parameters('backEndTier').cosmosdb.locationName]"},
+          "defaultExperience": {"value": "[parameters('backEndTier').cosmosdb.defaultExperience]"},
+          "pairedLocation": {"value": "[parameters('backEndTier').cosmosdb.pairedLocation]"},
+          "pairedLocationName": {"value": "[parameters('backEndTier').cosmosdb.pairedLocationName]"}
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
