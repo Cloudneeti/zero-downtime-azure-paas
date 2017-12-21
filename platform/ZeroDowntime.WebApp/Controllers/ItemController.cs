@@ -47,8 +47,6 @@ namespace ZeroDowntime.WebApp.Controllers
            var jsonItem = JsonConvert.SerializeObject(item);
            Task.Run(
            async () => {
-               ////response = await HttpHelper.PostAsync("https://zdfunction.azurewebsites.net/api/CosmosDataAccessFunc",
-               //    "gkodjNHDszgk5KiR9bj3k3n0aGBbeKVWCur9WhO45pNawwg3WPrZXw==", jsonItem);
                response = await HttpHelper.PostAsync(requesturi, jsonItem);
            }).Wait();
 
