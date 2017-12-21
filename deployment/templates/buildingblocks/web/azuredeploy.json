@@ -21,6 +21,12 @@
     "webApp": {
       "type": "secureObject"
     },
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "securestring"
+    },
     "location": {
       "type": "string"
     },
@@ -84,7 +90,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(parameters('functions').name)]",
+      "name": "[variables('functionAppName')]",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "fapp-appsvcplan",
@@ -100,7 +106,13 @@
             "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
           },
           "functionAppName": {
-            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').serviceName,'-fapp'))]"
+            "value": "[variables('functionAppName')]"
+          },
+          "cosmosDbUrl": {
+            "value": "[concat('https://',parameters('cosmosDbName'),'.documents.azure.com')]"
+          },
+          "cosmosDbKey": {
+            "value": "[parameters('cosmosDbKey')]"
           },
           "location": {
             "value": "[parameters('location')]"
@@ -157,6 +169,9 @@
           },
           "WebAppName": {
             "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp'))]"
+          },
+          "functionEndpoint": {
+            "value": "[concat('http://',variables('functionAppName'),'.azurewebsites.net')]"
           },
           "location": {
             "value": "[parameters('location')]"

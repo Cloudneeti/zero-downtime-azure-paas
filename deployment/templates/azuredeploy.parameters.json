@@ -20,7 +20,7 @@
     },
     "frontEndTier": {
       "value": {
-        "webApp": [
+        "webApp":
           {
             "name": "frontend",
             "serviceName": "zdt",
@@ -31,7 +31,6 @@
               "serviceName": "zdt"
             }
           }
-        ]
       }
     },
     "middleTier": {

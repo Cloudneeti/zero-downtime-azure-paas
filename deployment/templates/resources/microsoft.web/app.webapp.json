@@ -17,6 +17,9 @@
         "description": "Name of web site."
       }
     },
+    "functionEndpoint": {
+      "type": "string"
+    },
     "location": {
       "type": "string",
       "metadata": {
@@ -61,6 +64,10 @@
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                 "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
+              },
+              {
+                "name": "MiddleTierEndpoint",
+                "value": "[parameters('functionEndpoint')]"
               }
             ]
           }
