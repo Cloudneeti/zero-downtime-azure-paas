@@ -44,18 +44,18 @@
       </Code>
     </Task>
   </UsingTask>
- <!-- <Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
+  <Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
      <XmlPeek XmlInputPath="App.Local.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
         <Output TaskParameter="Result" ItemName="fever" />
     </XmlPeek>
     <Message Text="Target Artifact version: @(fever)" Importance="high" />
     <PropertyGroup>
-      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\function</ArtifactsFolder>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(fever)\function</ArtifactsFolder>
     </PropertyGroup>
     
     <Message Text="Zip Functions" />
     <Zip Src="$(FunctionSrcFolder)" Dest="$(ArtifactsFolder)\$(FunctionsZipName)" />
-  </Target>-->
+  </Target>
   <Target Name="ClearFunctions" BeforeTargets="Build">
     <Message Text="Delete Existing Functions" />
     <Delete Files="$(ArtifactsFolder)\$(FunctionsZipName)" Condition="Exists('$(ArtifactsFolder)\$(FunctionsZipName)')" />
