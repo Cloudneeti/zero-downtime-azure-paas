@@ -28,11 +28,13 @@
             "type": "object"
         }
     },
-    "variables": {
-        "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
-        "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
-        "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg')]"
-    },
+  "variables": {
+    "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
+    "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
+    "functionAppStorageAccName": "[concat(parameters('uniquePrefix'),'-fapp','-','','stg',parameters('packageVersion'))]",
+    "appServicePlanName": "[toLower(concat('fapp-appsvcplan',parameters('packageVersion')))]",
+    "functionAppName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').serviceName,'-fapp','-',parameters('packageVersion')))]"
+  },
     "resources": [
         {
             "apiVersion": "2017-05-10",
@@ -59,28 +61,28 @@
                 }
             }
         },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "fapp-appsvcplan",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/appsvcplan.azfunction.json')]"
-                },
-                "parameters": {
-                    "hostingPlanName": {
-                        "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
-                    },
-                    "tags": {
-                        "value": "[union(parameters('tags'), parameters('functions').tags)]"
-                    }
-                }
-            }
-        },
       {
         "apiVersion": "2017-05-10",
-        "name": "[concat(parameters('functions').name)]",
+        "name": "fapp-appsvcplan",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/appsvcplan.azfunction.json')]"
+          },
+          "parameters": {
+            "hostingPlanName": {
+              "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
+            },
+            "tags": {
+              "value": "[union(parameters('tags'), parameters('functions').tags)]"
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "2017-05-10",
+        "name": "[variables('functionAppName')]",
         "type": "Microsoft.Resources/deployments",
         "dependsOn": [
           "fapp-appsvcplan",
@@ -96,7 +98,7 @@
               "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
             },
             "functionAppName": {
-              "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').serviceName,'-fapp'))]"
+              "value": "[variables('functionAppName')]"
             },
             "location": {
               "value": "[parameters('location')]"
@@ -115,37 +117,6 @@
             }
           }
         }
-      },
-      {
-        "name": "fapp-package",
-        "apiVersion": "2017-05-10",
-        "type": "Microsoft.Resources/deployments",
-        "dependsOn": [
-          "[concat(parameters('functions').name)]",
-          "fapp-appsvcplan",
-          "fapp-storage"
-        ],
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/package.azfunction.json')]"
-          }
-        },
-        "parameters": {
-          "functionAppName": {
-            "value": "[concat(parameters('functions').name)]"
-          },
-          "location": {
-            "type": "[parameters('location')]"
-          },
-          "packageUri": {
-            "type": "[concat(parameters('_artifactsLocation'),'artifacts/',parameters('packageVersion'),'/function/MiddleTier.zip')]"
-          },
-          "tags": {
-            "type": "object"
-          }
-        }
-
       }
     ],
     "outputs": {}
