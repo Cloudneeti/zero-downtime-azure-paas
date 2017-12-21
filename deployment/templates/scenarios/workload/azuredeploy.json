@@ -37,7 +37,8 @@
           "_artifactsLocation": {"value": "[parameters('environmentReference')._artifactsLocation]"},
           "_artifactsSasToken": {"value": "[parameters('environmentReference')._artifactsLocationSasToken]"},
           "uniquePrefix": {"value": "[parameters('environmentReference').prefix]"},
-          "functions": {"value": "[parameters('middleTier').function]"},
+          "functions": { "value": "[parameters('middleTier').function]" },
+          "webApp": {"value":"[parameters('frontEndTier').webApp]"},
           "location": {"value": "[parameters('environmentReference').location]"},
           "appInsightsServiceName": {"value": "[parameters('operations').appInsights.serviceName]"},
           "tags": {"value": "[parameters('environmentReference').tags]"}
