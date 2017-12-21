@@ -7,10 +7,15 @@
     <FunctionSrcFolder>bin\$(Configuration)\net461</FunctionSrcFolder>
   </PropertyGroup>
   <ItemGroup>    
+    <PackageReference Include="Microsoft.Azure.DocumentDB" Version="1.19.1" />    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ZeroDowntime.Core\ZeroDowntime.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <None Update="App.Local.config">
@@ -45,7 +50,7 @@
     </XmlPeek>
     <Message Text="Target Artifact version: @(fever)" Importance="high" />
     <PropertyGroup>
-      <ArtifactsFolder>$(SolutionDir)\deployment\artifact\@(fever)\function</ArtifactsFolder>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(fever)\function</ArtifactsFolder>
     </PropertyGroup>
     
     <Message Text="Zip Functions" />
