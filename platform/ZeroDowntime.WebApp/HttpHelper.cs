@@ -24,14 +24,14 @@ namespace ZeroDowntime.WebApp
         /// <param name="apiKey"></param>
         /// <param name="postBody"></param>
         /// <returns></returns>
-        public static async Task<string> PostAsync(string requestUri, string apiKey, string postBody)
+        public static async Task<string> PostAsync(string requestUri, string postBody)
         {
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
             var httpContent = new StringContent(postBody, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(requestUri + "?code=" + apiKey, httpContent);
+            var response = await httpClient.PostAsync(requestUri,httpContent);
 
             if (response.IsSuccessStatusCode)
             {
@@ -47,12 +47,12 @@ namespace ZeroDowntime.WebApp
         /// <param name="requestUri"></param>
         /// <param name="apiKey"></param>
         /// <returns></returns>
-        public static async Task<string> GetAsync(string requestUri,string apiKey)
+        public static async Task<string> GetAsync(string requestUri)
         {
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
  
-            var response = await httpClient.GetAsync(requestUri+"?code="+apiKey); 
+            var response = await httpClient.GetAsync(requestUri); 
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsStringAsync();
