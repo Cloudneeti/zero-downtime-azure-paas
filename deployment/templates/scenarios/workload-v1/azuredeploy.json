@@ -33,17 +33,16 @@
           "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/buildingblocks/web/azuredeploy.json')]",
           "contentVersion": "1.0.0.0"
         },
-        "parameters": { 
-          "_artifactsLocation": {"value": "[parameters('environmentReference')._artifactsLocation]"},
-          "_artifactsSasToken": {"value": "[parameters('environmentReference')._artifactsLocationSasToken]"},
-          "uniquePrefix": {"value": "[parameters('environmentReference').prefix]"},
+        "parameters": {
+          "_artifactsLocation": { "value": "[parameters('environmentReference')._artifactsLocation]" },
+          "_artifactsSasToken": { "value": "[parameters('environmentReference')._artifactsLocationSasToken]" },
+          "uniquePrefix": { "value": "[parameters('environmentReference').prefix]" },
           "functions": { "value": "[parameters('middleTier').function]" },
-          "webApp": {"value":"[parameters('frontEndTier').webApp]"},
-          "functions": { "value": "[parameters('middleTier').function]" },
-          "packageVersion": {"value": "[parameters('environmentReference').packageVersion]"},
-          "location": {"value": "[parameters('environmentReference').location]"},
-          "appInsightsServiceName": {"value": "[parameters('operations').appInsights.serviceName]"},
-          "tags": {"value": "[parameters('environmentReference').tags]"}
+          "packageVersion": { "value": "[parameters('environmentReference').packageVersion]" },
+          "webApp": { "value": "[parameters('frontEndTier').webApp]" },
+          "location": { "value": "[parameters('environmentReference').location]" },
+          "appInsightsServiceName": { "value": "[parameters('operations').appInsights.serviceName]" },
+          "tags": { "value": "[parameters('environmentReference').tags]" }
         }
       }
     }
