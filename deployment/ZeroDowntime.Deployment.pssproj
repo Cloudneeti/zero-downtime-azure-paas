@@ -30,6 +30,9 @@
     <Folder Include="artifacts\v1\" />
     <Folder Include="artifacts\v1\function\" />
     <Folder Include="artifacts\v1\webapp\" />
+    <Folder Include="artifacts\v2\" />
+    <Folder Include="artifacts\v2\function\" />
+    <Folder Include="artifacts\v2\webapp\" />
     <Folder Include="scripts\" />
     <Folder Include="templates\" />
     <Folder Include="templates\buildingblocks\" />
