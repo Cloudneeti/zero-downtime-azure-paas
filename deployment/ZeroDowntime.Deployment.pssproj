@@ -27,9 +27,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="artifact\" />
-    <Folder Include="artifact\v1\" />
-    <Folder Include="artifact\v1\function\" />
-    <Folder Include="artifact\v1\webapp\" />
+    <Folder Include="artifacts\v1\" />
+    <Folder Include="artifacts\v1\function\" />
+    <Folder Include="artifacts\v1\webapp\" />
     <Folder Include="scripts\" />
     <Folder Include="templates\" />
     <Folder Include="templates\buildingblocks\" />
