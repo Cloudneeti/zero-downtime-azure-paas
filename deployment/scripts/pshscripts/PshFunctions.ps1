@@ -263,24 +263,23 @@ function Invoke-ARMDeployment {
             ValueFromPipelineByPropertyName = $true,
             Position = 0)]
         [guid]$subscriptionId,
+
         [Parameter(Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 1)]
         [ValidateScript( {$_ -notmatch '\s+' -and $_ -match '[a-zA-Z0-9]+'})]
         [string]$resourceGroupPrefix,
+
         [Parameter(Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 2)]
         [string]$location,
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true,
-            Position = 3)]
-        [ValidateSet("dev", "prod")]
-        [string]$env = 'dev',
+
         [Parameter(Mandatory = $true,
         ValueFromPipelineByPropertyName = $true,
         Position = 4)]
         [int[]]$steps,
+
         [Parameter(Mandatory = $false,
             ValueFromPipelineByPropertyName = $true,
             Position = 5)]
@@ -288,15 +287,16 @@ function Invoke-ARMDeployment {
     )
     $null = Save-AzureRmContext -Path $ProfilePath -Force
     try {
-        $deploymentHash = Get-StringHash(($subscriptionId, $resourceGroupPrefix, $env) -join '-')
+        $deploymentHash = Get-StringHash(($subscriptionId, $resourceGroupPrefix) -join '-')
         if ($prerequisiteRefresh) {
             Publish-BuildingBlocksTemplates $deploymentHash
         }
         $deploymentData = Get-DeploymentData $deploymentHash
         $deployments = @{
-            1 = @{"name" = "monitoring"; "rg" = "monitoring"}
-            2 = @{"name" = "workload"; "rg" = "workload"};
-            3 = @{"name" = "workload\update-resources"; "rg" = "workload"}
+            1 = @{"name" = "operations"; "rg" = "operations"}
+            2 = @{"name" = "workload"; "rg" = "workload$deploymentVersion"};
+            3 = @{"name" = "backend"; "rg" = "backend"};
+            4 = @{"name" = "networking"; "rg" = "networking"}
         }
         foreach ($step in $steps) {
             $importSession = {
@@ -324,9 +324,9 @@ function Invoke-ARMDeployment {
                     -ErrorAction Stop -Verbose 4>&1
             }.GetNewClosure()
             $Script:newDeploymentName = (($deploymentData[0], ($deployments.$step).name) -join '-').ToString().Replace('\','-')
-            $Script:newDeploymentResourceGroupName = (($resourceGroupPrefix,($deployments.$step).rg,$env,'rg' ) -join '-')
+            $Script:newDeploymentResourceGroupName = (($resourceGroupPrefix,($deployments.$step).rg,'rg' ) -join '-')
             Start-job -Name ("$step-create") -ScriptBlock $importSession -Debug `
-                -ArgumentList (($resourceGroupPrefix,($deployments.$step).rg,$env,'rg' ) -join '-'), "$scriptroot\templates\scenarios\$(($deployments.$step).name)\azuredeploy.json", $deploymentData[1], (($deploymentData[0], ($deployments.$step).name) -join '-').ToString().Replace('\','-'), $scriptRoot, $subscriptionId
+                -ArgumentList (($resourceGroupPrefix,($deployments.$step).rg,'rg' ) -join '-'), "$scriptroot\templates\scenarios\$(($deployments.$step).name)\azuredeploy.json", $deploymentData[1], (($deploymentData[0], ($deployments.$step).name) -join '-').ToString().Replace('\','-'), $scriptRoot, $subscriptionId
         }
     }
     catch {
@@ -355,12 +355,12 @@ function Publish-BuildingBlocksTemplates ($hash) {
             log "Uploaded $($_.FullName) to $($StorageAccount.StorageAccountName)." Yellow
         }
     }
-    Get-ChildItem $scriptroot -Directory -Filter functions | ForEach-Object {
+    Get-ChildItem $scriptroot -Directory -Filter artifacts | ForEach-Object {
         $Directory = $_
         if ( $Directory -notin $ContainerList ) {
             $StorageAccount | New-AzureStorageContainer -Name $Directory.Name -Permission Container -ErrorAction Stop | Out-Null
         }
-        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.zip | ForEach-Object {
+        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.txt | ForEach-Object {
             Set-AzureStorageBlobContent -Context $StorageAccount.Context -Container $Directory.Name -File $_.FullName -Blob $_.FullName.Remove(0,(($Directory).FullName.Length + 1)) -Force -ErrorAction Stop | Out-Null
             log "Uploaded $($_.FullName) to $($StorageAccount.StorageAccountName)." Yellow
         }

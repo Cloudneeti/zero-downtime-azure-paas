@@ -19,13 +19,13 @@
     },
     "frontEndTier": {
       "value": {
-        "function": [
+        "webApp": [
           {
-            "name": "ZeroDownTime",
+            "name": "frontend",
             "serviceName": "zdt",
             "hostingPlanServiceName": "zdt",
             "tags": {
-              "tier": "frontEnd",
+              "tier": "frontend",
               "serviceName": "zdt"
             }
           }
@@ -33,66 +33,57 @@
       }
     },
     "middleTier": {
-      "metadata": {
-        
-      },
-      "value": ""
+      "value": {
+        "function": {
+          "name": "middletier",
+          "serviceName": "zdt",
+          "hostingPlanServiceName": "zdt",
+          "tags": {
+            "tier": "middle",
+            "serviceName": "zdt"
+          }
+        }
+      }
     },
     "backEndTier": {
-      "metadata": {
-        
-      },
-      "value": ""
+      "value": {
+        "cosmosdb": {
+          "name": "backend",
+          "serviceName": "zdt",
+          "tags": {
+            "tier": "backend",
+            "serviceName": "zdt"
+          },
+          "locationName": "East US",
+          "defaultExperience": "DocumentDB",
+          "pairedLocation": "westus",
+          "pairedLocationName": "West US"
+        }
+      }
     },
     "operations": {
       "value": {
         "appInsights":{
           "serviceName": "zdt",
           "tags": {
-            "tier": "Operations"
+            "tier": "operations"
           }
         },
         "logAnalytics" :{
           "serviceName": "zdt",
           "tags": {
-            "tier": "Operations"
+            "tier": "pperations"
           }
-        },
-        "keyVault": {
+        }
+      }
+    },
+    "network": {
+      "value": {
+        "trafficManager": {
           "serviceName": "zdt",
-          "secretExpirationDate": "auto-update",
           "tags": {
-            "tier": "Operations"
-          },
-          "accessPolicies": [
-            {
-              "tenantId": "auto-update",
-              "objectId": "siteAdminObjectId-auto-update",
-              "permissions": {
-                "keys": [
-                  "get", "list", "create", "update", "import", "delete", "backup", "restore", "recover"
-                ],
-                "secrets": [
-                  "get", "list", "set", "delete", "backup", "restore", "recover"
-                ],
-                "certificates": [
-                  "get", "list", "delete", "create", "import", "update", "managecontacts", "getissuers", "listissuers", "setissuers", "deleteissuers", "manageissuers", "recover"
-                ]
-              }
-            },
-            {
-              "tenantId": "auto-update",
-              "objectId": "AADServicePrincipalObjectId-auto-update",
-              "permissions": {
-                "keys": [
-                  "get", "wrapKey", "unwrapKey", "sign", "verify"
-                ],
-                "secrets": [
-                  "get", "list" 
-                ]
-              }
-            }
-          ]
+            "tier": "network"
+          }
         }
       }
     }
