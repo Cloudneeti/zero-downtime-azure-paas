@@ -275,6 +275,9 @@ function Invoke-ARMDeployment {
             Position = 2)]
         [string]$location,
 
+		[Parameter(Mandatory=$true,ValueFromPipelineByPropertyName = $true,Position=3)]
+		[string]$packageVersion,
+
         [Parameter(Mandatory = $true,
         ValueFromPipelineByPropertyName = $true,
         Position = 4)]
@@ -294,7 +297,7 @@ function Invoke-ARMDeployment {
         $deploymentData = Get-DeploymentData $deploymentHash
         $deployments = @{
             1 = @{"name" = "operations"; "rg" = "operations"}
-            2 = @{"name" = "workload"; "rg" = "workload$deploymentVersion"};
+            2 = @{"name" = "workload-$packageVersion"; "rg" = "workload-$packageVersion"};
             3 = @{"name" = "backend"; "rg" = "backend"};
             4 = @{"name" = "networking"; "rg" = "networking"}
         }
@@ -360,7 +363,7 @@ function Publish-BuildingBlocksTemplates ($hash) {
         if ( $Directory -notin $ContainerList ) {
             $StorageAccount | New-AzureStorageContainer -Name $Directory.Name -Permission Container -ErrorAction Stop | Out-Null
         }
-        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.txt | ForEach-Object {
+        Get-ChildItem $Directory.FullName -Recurse -File -Filter *.zip | ForEach-Object {
             Set-AzureStorageBlobContent -Context $StorageAccount.Context -Container $Directory.Name -File $_.FullName -Blob $_.FullName.Remove(0,(($Directory).FullName.Length + 1)) -Force -ErrorAction Stop | Out-Null
             log "Uploaded $($_.FullName) to $($StorageAccount.StorageAccountName)." Yellow
         }
@@ -382,6 +385,7 @@ function Get-DeploymentData($hash) {
     $parametersData.parameters.environmentReference.value.tenantId = $tenantId
     $parametersData.parameters.environmentReference.value.tenantDomain = $tenantDomain
     $parametersData.parameters.environmentReference.value.location = $location
+	$parametersData.parameters.environmentReference.value.packageVersion = $packageVersion
     ( $parametersData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $tmp
     $deploymentName, $tmp
 }

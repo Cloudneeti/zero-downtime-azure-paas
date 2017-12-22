@@ -45,7 +45,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <WebAppZipName>FrontEndWebApp.zip</WebAppZipName>
-    <WebAppSrcFolder>bin</WebAppSrcFolder>
+    <WebAppSrcFolder>$(SolutionDir)\platform\ZeroDowntime.WebApp</WebAppSrcFolder>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Azure.Documents.Client, Version=1.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

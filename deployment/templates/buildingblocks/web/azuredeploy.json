@@ -1,118 +1,224 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "_artifactsLocation": {
-            "type": "securestring"
-        },
-        "_artifactsSasToken": {
-            "type": "securestring"
-        },
-        "uniquePrefix": {
-            "defaultValue": "qwerty",
-            "type": "string"
-        },
-        "functions": {
-            "type": "secureObject"
-        },
-        "location":{
-            "type": "string"
-        },
-        "appInsightsServiceName": {
-            "type": "string"
-        },
-        "tags": {
-            "type": "object"
-        }
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "securestring"
     },
-    "variables": {
-        "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
-        "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
-        "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg')]"
+    "_artifactsSasToken": {
+      "type": "securestring"
     },
-    "resources": [
-        {
-            "apiVersion": "2017-05-10",
-            "name": "fapp-storage",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.storage/general.storage.json')]"
-                },
-                "parameters": {
-                    "storageAccountName": {
-                    "value": "[variables('functionAppStorageAccName')]"
-                    },
-                    "sku": {
-                    "value": "Standard_LRS"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "tags": {
-                        "value": "[parameters('tags')]"
-                    }
-                }
-            }
+    "uniquePrefix": {
+      "defaultValue": "qwerty",
+      "type": "string"
+    },
+    "functions": {
+      "type": "secureObject"
+    },
+    "packageVersion": {
+      "type": "string"
+    },
+    "webApp": {
+      "type": "secureObject"
+    },
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "securestring"
+    },
+    "location": {
+      "type": "string"
+    },
+    "appInsightsServiceName": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "variables": {
+    "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
+    "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
+    "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg')]",
+    "functionAppName": "[toLower(concat(parameters('uniquePrefix'),'-fapp-',parameters('packageVersion')))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "fapp-storage",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.storage/general.storage.json')]"
         },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "fapp-appsvcplan",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/appsvcplan.azfunction.json')]"
-                },
-                "parameters": {
-                    "hostingPlanName": {
-                        "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
-                    },
-                    "tags": {
-                        "value": "[union(parameters('tags'), parameters('functions').tags)]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[concat(parameters('functions').name)]",
-            "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "fapp-appsvcplan",
-                "fapp-storage"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/app.azfunction.json')]"
-                },
-                "parameters": {
-                    "hostingPlanName": {
-                        "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
-                    },
-                    "functionAppName": {
-                        "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').serviceName,'-fapp'))]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "storageAccountName":{
-                        "value": "[variables('functionAppStorageAccName')]"
-                    },
-                    "appInsightsName":{
-                        "value": "[variables('appInsightName')]"
-                    },
-                    "appInsightsResourceGroup":{
-                        "value": "[variables('appInsightsResourceGroup')]"
-                    },
-                    "tags": {
-                        "value": "[union(parameters('tags'), parameters('functions').tags)]"
-                    }
-                }
-            }
+        "parameters": {
+          "storageAccountName": {
+            "value": "[variables('functionAppStorageAccName')]"
+          },
+          "sku": {
+            "value": "Standard_LRS"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
         }
-    ],
-    "outputs": {}
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "fapp-appsvcplan",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/appsvcplan.azfunction.json')]"
+        },
+        "parameters": {
+          "hostingPlanName": {
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
+          },
+          "tags": {
+            "value": "[union(parameters('tags'), parameters('functions').tags)]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[variables('functionAppName')]",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "fapp-appsvcplan",
+        "fapp-storage"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/app.azfunction.json')]"
+        },
+        "parameters": {
+          "hostingPlanName": {
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
+          },
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "cosmosDbUrl": {
+            "value": "[concat('https://',parameters('cosmosDbName'),'.documents.azure.com')]"
+          },
+          "cosmosDbKey": {
+            "value": "[parameters('cosmosDbKey')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('functionAppStorageAccName')]"
+          },
+          "appInsightsName": {
+            "value": "[variables('appInsightName')]"
+          },
+          "appInsightsResourceGroup": {
+            "value": "[variables('appInsightsResourceGroup')]"
+          },
+          "tags": {
+            "value": "[union(parameters('tags'), parameters('functions').tags)]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "webapp-appsvcplan",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/appsvcplan.webapp.json')]"
+        },
+        "parameters": {
+          "hostingPlanName": {
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').hostingPlanServiceName,'-appsvcplan'))]"
+          },
+          "tags": {
+            "value": "[union(parameters('tags'), parameters('webApp').tags)]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[concat(parameters('webApp').name)]",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "webapp-appsvcplan"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/app.webapp.json')]"
+        },
+        "parameters": {
+          "hostingPlanName": {
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').hostingPlanServiceName,'-appsvcplan'))]"
+          },
+          "WebAppName": {
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp-',parameters('packageVersion')))]"
+          },
+          "functionEndpoint": {
+            "value": "[concat('http://',variables('functionAppName'),'.azurewebsites.net')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "DeployPackageURI": {
+            "value": "[concat(parameters('_artifactsLocation'),'artifacts/',parameters('packageVersion'),'/webapp/FrontEndWebApp.zip')]"
+          },
+          "appInsightsName": {
+            "value": "[variables('appInsightName')]"
+          },
+          "appInsightsResourceGroup": {
+            "value": "[variables('appInsightsResourceGroup')]"
+          },
+          "tags": {
+            "value": "[union(parameters('tags'), parameters('webApp').tags)]"
+          }
+        }
+      }
+    },
+    {
+      "name": "fapp-package",
+      "apiVersion": "2017-05-10",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "[variables('functionAppName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/package.azfunction.json')]"
+        },
+        "parameters": {
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "packageUri": {
+            "value": "[concat(parameters('_artifactsLocation'),'artifacts/',parameters('packageVersion'),'/function/MiddleTierFunction.zip')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
 }
