@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hostingPlanName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "AppSvcPlan",
+      "metadata": {
+        "description": "Name of AppSvc Plan."
+      }
+    },
+    "webAppSvcPlanWorkerSize": {
+      "type": "string",
+      "allowedValues": [
+        "0",
+        "1",
+        "2"
+      ],
+      "defaultValue": "0",
+      "metadata": {
+        "description": "Size of AppSvc Worker."
+      }
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [],
+      "properties": {
+        "name": "[parameters('hostingPlanName')]",
+        "workerSize": "[parameters('WebAppSvcPlanWorkerSize')]",
+        "numberOfWorkers": 1
+      },
+      "sku": {
+        "name": "F1",
+        "tier": "Free",
+        "capacity": "1"
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

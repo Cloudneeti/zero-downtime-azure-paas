@@ -1,0 +1,97 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hostingPlanName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "AppSvcPlan",
+      "metadata": {
+        "description": "Name of AppSvc Plan."
+      }
+    },
+    "WebAppName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of web site."
+      }
+    },
+    "functionEndpoint": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location for web app."
+      }
+    },
+    "DeployPackageURI": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "WebDeploy package location."
+      }
+    },
+    "appInsightsResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of resource group for application insight."
+      }
+    },
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "AppInsight name."
+      }
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+    "resources": [
+      {
+        "name": "[parameters('WebAppName')]",
+        "type": "Microsoft.Web/sites",
+        "location": "[parameters('location')]",
+        "apiVersion": "2015-08-01",
+        "tags": "[parameters('tags')]",
+        "properties": {
+          "name": "[parameters('WebAppName')]",
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+          "siteConfig": {
+            "appSettings": [
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
+              },
+              {
+                "name": "MiddleTierEndpoint",
+                "value": "[parameters('functionEndpoint')]"
+              }
+            ]
+          }
+        },
+
+        "resources": [
+          {
+            "name": "MSDeploy",
+            "type": "extensions",
+            "location": "[parameters('location')]",
+            "apiVersion": "2015-08-01",
+            "dependsOn": [
+              "[concat('Microsoft.Web/sites/', parameters('WebAppName'))]"
+            ],
+            "tags": {
+              "displayName": "WebAppMSDeploy"
+            },
+            "properties": {
+              "packageUri": "[parameters('DeployPackageURI')]"
+            }
+          }
+        ]
+      }
+    ],
+    "outputs": {
+    }
+}

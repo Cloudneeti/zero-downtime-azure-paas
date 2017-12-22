@@ -5,9 +5,15 @@
         "hostingPlanName": {
             "type": "string"
         },
-        "functionAppName": {
-            "type": "string"
-        },
+      "functionAppName": {
+        "type": "string"
+      },
+      "cosmosDbUrl": {
+        "type": "string"
+      },
+      "cosmosDbKey": {
+        "type": "securestring"
+      },
         "location": {
             "type": "string"
         },
@@ -17,9 +23,9 @@
         "appInsightsName":{
             "type": "string"
         },
-        "appInsightsResourceGroup":{
-            "type": "string"
-        },
+      "appInsightsResourceGroup": {
+        "type": "string"
+      },
         "tags": {
             "type": "object"
         }
@@ -61,10 +67,18 @@
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
                             "value": "6.5.0"
                         },
-                        {
-                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
-                        }
+                      {
+                        "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                        "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
+                      },
+                      {
+                        "name": "CosmosDbEndpoint",
+                        "value": "[parameters('cosmosDbUrl')]"
+                      },
+                      {
+                        "name": "CosmosDbKey",
+                        "value": "[parameters('cosmosDbKey')]"
+                      }
                     ]
                 }
             }
