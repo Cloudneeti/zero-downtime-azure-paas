@@ -64,7 +64,9 @@
     },
     "operations": {
       "value": {
-        "appInsights":{
+        "appInsights": {
+          "webtestName": "zdt",
+          "alertrulesName": "zdtAlerts",
           "serviceName": "zdt",
           "tags": {
             "tier": "operations"
