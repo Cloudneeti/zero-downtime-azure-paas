@@ -25,9 +25,9 @@
     }
   },
   "variables": {
-    "trafficManagerName": "[toLower(concat(parameters(prefix),'-',parameters('serviceName'),'-tfm'))]",
-    "appGatewayName": "[toLower(concat(parameters(prefix),'-',parameters('serviceName'),'-agw'))]",
-    "appGatewayPublicIpName": "[toLower(concat(parameters(prefix),'-',parameters('serviceName'),'-pip'))]"
+    "trafficManagerName": "[toLower(concat(parameters('prefix'),'-',parameters('serviceName'),'-tfm'))]",
+    "appGatewayName": "[toLower(concat(parameters('prefix'),'-',parameters('serviceName'),'-agw'))]",
+    "appGatewayPublicIpName": "[toLower(concat(parameters('prefix'),'-',parameters('serviceName'),'-pip'))]"
   },
   "resources": [
     {
@@ -37,7 +37,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/appgateway.json]"
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/appgateway.json')]"
         },
         "parameters": {
           "name": {
@@ -65,7 +65,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/trafficmanager.json]"
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/trafficmanager.json')]"
         },
         "parameters": {
           "name": {

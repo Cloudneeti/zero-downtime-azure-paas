@@ -31,40 +31,6 @@
   "resources": [
     {
       "apiVersion": "2017-05-10",
-      "name": "deploy-trafficmanager",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/trafficmanager.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "name": { "value": "[variables('trafficManagerName')]" }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-06-01",
-      "name": "deploy-appgateway",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/appgateway.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appGateWayName": { "value": "[variables('appGatewayName')]" },
-          "vnetName": { "value": "[variables('vnetName')]" },
-          "publicIpName": { "value": "[variables('publicIpName')]" }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
       "name": "deploy-networking",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [],
@@ -94,7 +60,9 @@
             }
           }
         }
-      },
+      }
+    }
+  ],
 
       "outputs": {}
-    }
+}
