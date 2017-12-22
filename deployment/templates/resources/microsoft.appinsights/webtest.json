@@ -18,7 +18,7 @@
       "defaultValue": "",
       "type": "string",
       "metadata": {
-        "description": "The URL for webapp"
+        "description": "The URL for traffic manager"
       }
     }
   },
