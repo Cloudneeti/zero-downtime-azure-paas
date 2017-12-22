@@ -51,13 +51,10 @@
             "value": "zdt"
           },
           "webAppUrlV1": {
-            "value": "[toLower(concat('http://',parameters('environmentReference').prefix,'-webapp-','v1.azurewebsites.net'))]"
+            "value": "[toLower(concat(parameters('environmentReference').prefix,'-webapp-','v1.azurewebsites.net'))]"
           },
           "webAppUrlV2": {
-            "value": "[toLower(concat('http://',parameters('environmentReference').prefix,'-webapp-','v2.azurewebsites.net'))]",
-            "metadata": {
-              "description": "URL of Azure Web App 2"
-            }
+            "value": "[toLower(concat(parameters('environmentReference').prefix,'-webapp-','v2.azurewebsites.net'))]"
           }
         }
       }

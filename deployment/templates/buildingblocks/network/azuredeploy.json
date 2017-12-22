@@ -40,7 +40,13 @@
           "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/appgateway.json')]"
         },
         "parameters": {
-          "name": {
+          "prefix": {
+            "value": "[parameters('prefix')]"
+          },
+          "serviceName": {
+            "value": "[parameters('serviceName')]"
+          },
+          "appGatewayName": {
             "value": "[variables('appGatewayName')]"
           },
           "webAppUrlV1": {
@@ -59,9 +65,6 @@
       "apiVersion": "2017-05-10",
       "name": "deploy-trafficmanager",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "deploy-appgateway"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -70,6 +73,9 @@
         "parameters": {
           "name": {
             "value": "[variables('trafficManagerName')]"
+          },
+          "appGatewayName": {
+            "value": "[variables('appGatewayName')]"
           },
           "appGatewayPublicIpName": {
             "value": "[variables('appGatewayPublicIpName')]"

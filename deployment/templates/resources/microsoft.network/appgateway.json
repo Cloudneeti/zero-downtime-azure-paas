@@ -47,6 +47,12 @@
         "description": "Number of instances"
       }
     },
+    "prefix": {
+      "type": "string"
+    },
+    "serviceName": {
+      "type": "string"
+    },
     "appGatewayName": {
       "type": "string"
     },
@@ -74,13 +80,12 @@
     }
   },
   "variables": {
-    "applicationGatewayName": "applicationGateway2",
-    "virtualNetworkName": "virtualNetwork2",
+    "virtualNetworkName": "[concat(parameters('prefix'),'-',parameters('serviceName'),'-vnet')]",
     "subnetName": "appGatewaySubnet",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
     "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIpName'))]",
-    "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('applicationGatewayName'))]"
+    "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',parameters('appGatewayName'))]"
   },
   "resources": [
     {
@@ -115,7 +120,7 @@
     },
     {
       "apiVersion": "2017-06-01",
-      "name": "[variables('applicationGatewayName')]",
+      "name": "[parameters('appGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "location": "[resourceGroup().location]",
       "dependsOn": [
