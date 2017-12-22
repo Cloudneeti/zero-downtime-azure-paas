@@ -30,9 +30,6 @@
       "apiVersion": "2017-05-10", 
       "name": "deploy-functionapp", 
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "deploy-cosmosdb"
-      ],
       "properties": { 
          "mode": "Incremental",
         "templateLink": {
