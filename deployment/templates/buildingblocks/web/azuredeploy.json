@@ -15,8 +15,17 @@
     "functions": {
       "type": "secureObject"
     },
+    "packageVersion": {
+      "type": "string"
+    },
     "webApp": {
       "type": "secureObject"
+    },
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "securestring"
     },
     "location": {
       "type": "string"
@@ -28,11 +37,12 @@
       "type": "object"
     }
   },
-    "variables": {
-        "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
-        "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
-        "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg')]"
-    },
+  "variables": {
+    "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
+    "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
+    "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg')]",
+    "functionAppName": "[toLower(concat(parameters('uniquePrefix'),'-fapp-',parameters('packageVersion')))]"
+  },
   "resources": [
     {
       "apiVersion": "2017-05-10",
@@ -80,7 +90,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(parameters('functions').name)]",
+      "name": "[variables('functionAppName')]",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "fapp-appsvcplan",
@@ -96,7 +106,13 @@
             "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').hostingPlanServiceName,'-appsvcplan'))]"
           },
           "functionAppName": {
-            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('functions').serviceName,'-fapp'))]"
+            "value": "[variables('functionAppName')]"
+          },
+          "cosmosDbUrl": {
+            "value": "[concat('https://',parameters('cosmosDbName'),'.documents.azure.com')]"
+          },
+          "cosmosDbKey": {
+            "value": "[parameters('cosmosDbKey')]"
           },
           "location": {
             "value": "[parameters('location')]"
@@ -152,13 +168,16 @@
             "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').hostingPlanServiceName,'-appsvcplan'))]"
           },
           "WebAppName": {
-            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp'))]"
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp-',parameters('packageVersion')))]"
+          },
+          "functionEndpoint": {
+            "value": "[concat('http://',variables('functionAppName'),'.azurewebsites.net')]"
           },
           "location": {
             "value": "[parameters('location')]"
           },
           "DeployPackageURI": {
-            "value": "[concat(parameters('_artifactsLocation'),'/artifacts/',parameters('webApp').deploymentVersion,'/webapp')]"
+            "value": "[concat(parameters('_artifactsLocation'),'artifacts/',parameters('packageVersion'),'/webapp/FrontEndWebApp.zip')]"
           },
           "appInsightsName": {
             "value": "[variables('appInsightName')]"
@@ -171,7 +190,35 @@
           }
         }
       }
+    },
+    {
+      "name": "fapp-package",
+      "apiVersion": "2017-05-10",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "[variables('functionAppName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.web/package.azfunction.json')]"
+        },
+        "parameters": {
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "packageUri": {
+            "value": "[concat(parameters('_artifactsLocation'),'artifacts/',parameters('packageVersion'),'/function/MiddleTierFunction.zip')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        }
+      }
     }
   ],
-    "outputs": {}
+  "outputs": {}
 }

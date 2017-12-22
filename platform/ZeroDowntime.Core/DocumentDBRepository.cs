@@ -22,6 +22,9 @@ namespace ZeroDowntime.Core
             try
             {
                 client = new DocumentClient(new Uri(endpoint), authKey);
+                CreateDatabaseIfNotExistsAsync().Wait();
+                CreateCollectionIfNotExistsAsync().Wait();
+
             }
             catch (DocumentClientException ex)
             {
@@ -31,6 +34,48 @@ namespace ZeroDowntime.Core
                 }
             }
         }
+
+        private static async Task CreateDatabaseIfNotExistsAsync()
+        {
+            try
+            {
+                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri("ToDoList"));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await client.CreateDatabaseAsync(new Database { Id = "ToDoList" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private static async Task CreateCollectionIfNotExistsAsync()
+        {
+            try
+            {
+                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri("ToDoList", "Items"));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await client.CreateDocumentCollectionAsync(
+                        UriFactory.CreateDatabaseUri("ToDoList"),
+                        new DocumentCollection { Id = "Items" },
+                        new RequestOptions { OfferThroughput = 1000 });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
 
         public static async Task<Document> CreateItemAsync(T item, string DatabaseId, string CollectionId)
         {
