@@ -109,10 +109,11 @@ param
     [string]$deploymentPassword = 'null',
 
     #
-    [Parameter(Mandatory = $false,
+    [Parameter(Mandatory = $true,
     ParameterSetName = "Deployment",
     Position = 9)]
-    [string]$deploymentVersion = 'v1',
+	[ValidateSet("v1","v2")]
+    [string]$packageVersion,
 
     #Switch to install required modules.
     [Parameter(Mandatory = $true,
@@ -186,7 +187,7 @@ Else{
 }
 
 # components required for creating resourcegroup
-$components = @("artifacts","workload$deploymentVersion","networking", "operations", "backend")
+$components = @("artifacts","workload-$packageVersion","networking", "operations", "backend")
 
 if ($clearDeployment) {
     try {
@@ -412,7 +413,7 @@ else {
     ( $rbacData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $rbactmp
     Update-RoleAssignments -inputFile $rbactmp -prefix $deploymentPrefix -domain $tenantDomain
     Start-Sleep 10
-#>
+
     ### Create PSCredential Object for SiteAdmin
     $siteAdminUserName = "Alex_SiteAdmin@" + $tenantDomain
     $siteAdmincredential = New-Object System.Management.Automation.PSCredential ($siteAdminUserName, $secureDeploymentPassword)
@@ -430,12 +431,12 @@ else {
         break
     }
     Start-Sleep 10
-
+#>
     ### Invoke ARM deployment.
     log "Intiating Zero Down Time Solution Deployment." Cyan
     
     log "Invoke Background Job Deployment for Monitoring Solution - OMS Workspace and Application Insights."
-    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 1 -prerequisiteRefresh
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 1 -prerequisiteRefresh -packageVersion $packageVersion
 
     # Pause Session for Background Job to Initiate.
     log "Waiting session for background job to initiate"
@@ -458,7 +459,7 @@ else {
     }
 
     log "Invoke Workload deployment."
-    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 2 -prerequisiteRefresh
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -packageVersion $packageVersion  -steps 2
 
     # Pause Session for Background Job to Initiate.
     log "Waiting for background job to initiate"
@@ -471,7 +472,7 @@ else {
     }
     
     log "Invoke Backend deployment."
-    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 3
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 3 -packageVersion $packageVersion
 
     # Pause Session for Background Job to Initiate.
     log "Waiting for background job to initiate"
@@ -484,7 +485,7 @@ else {
     }
 
     log "Invoke Network deployment."
-    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 4
+    Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 4 -packageVersion $packageVersion
 
     # Pause Session for Background Job to Initiate.
     log "Waiting for background job to initiate"

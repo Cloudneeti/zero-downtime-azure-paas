@@ -7,7 +7,8 @@
         "prefix": "demo",
         "_artifactsLocation": "auto-update",
         "_artifactsLocationSasToken": "auto-update",
-        "location":"auto-update",
+        "location": "auto-update",
+        "packageVersion": "auto-update",
         "tags": {
           "environment" : "Pilot"
         },
@@ -19,7 +20,7 @@
     },
     "frontEndTier": {
       "value": {
-        "webApp": [
+        "webApp":
           {
             "name": "frontend",
             "serviceName": "zdt",
@@ -30,7 +31,6 @@
               "serviceName": "zdt"
             }
           }
-        ]
       }
     },
     "middleTier": {
