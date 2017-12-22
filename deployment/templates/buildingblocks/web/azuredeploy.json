@@ -177,7 +177,7 @@
             "value": "[parameters('location')]"
           },
           "DeployPackageURI": {
-            "value": "[concat(parameters('_artifactsLocation'),'/artifacts/',parameters('webApp').deploymentVersion,'/webapp')]"
+            "value": "[concat(parameters('_artifactsLocation'),'artifacts/',parameters('packageVersion'),'/webapp/FrontEndWebApp.zip')]"
           },
           "appInsightsName": {
             "value": "[variables('appInsightName')]"

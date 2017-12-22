@@ -39,6 +39,7 @@
           "uniquePrefix": { "value": "[parameters('environmentReference').prefix]" },
           "functions": { "value": "[parameters('middleTier').function]" },
           "packageVersion": { "value": "[parameters('environmentReference').packageVersion]" },
+          "webApp": { "value": "[parameters('frontEndTier').webApp]" },
           "location": { "value": "[parameters('environmentReference').location]" },
           "appInsightsServiceName": { "value": "[parameters('operations').appInsights.serviceName]" },
           "tags": { "value": "[parameters('environmentReference').tags]" }
