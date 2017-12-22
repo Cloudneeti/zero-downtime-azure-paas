@@ -41,17 +41,29 @@
         8,
         9,
         10
-      ],      
+      ],
       "defaultValue": 2,
       "metadata": {
         "description": "Number of instances"
       }
     },
-    "webAppUrl": {
+    "appGatewayName": {
+      "type": "string"
+    },
+    "webAppUrlV1": {
       "type": "string",
       "metadata": {
         "description": "URL of Azure Web App 1"
       }
+    },
+    "webAppUrlV2": {
+      "type": "string",
+      "metadata": {
+        "description": "URL of Azure Web App 1"
+      }
+    },
+    "publicIpName": {
+      "type": "string"
     },
     "probeEnabled": {
       "type": "bool",
@@ -63,19 +75,18 @@
   },
   "variables": {
     "applicationGatewayName": "applicationGateway2",
-    "publicIPAddressName": "publicIp2",
     "virtualNetworkName": "virtualNetwork2",
     "subnetName": "appGatewaySubnet",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-    "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+    "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIpName'))]",
     "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('applicationGatewayName'))]"
   },
   "resources": [
     {
       "apiVersion": "2017-06-01",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicIPAddressName')]",
+      "name": "[parameters('publicIpName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
@@ -109,7 +120,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIpName'))]"
       ],
       "properties": {
         "sku": {
@@ -151,7 +162,10 @@
             "properties": {
               "BackendAddresses": [
                 {
-                  "IpAddress": "[parameters('webAppUrl')]"
+                  "IpAddress": "[parameters('webAppUrlV1')]"
+                },
+                {
+                  "IpAddress": "[parameters('webAppUrlV2')]"
                 }
               ]
             }

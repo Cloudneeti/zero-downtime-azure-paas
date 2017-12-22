@@ -59,10 +59,42 @@
         "parameters": {
           "appGateWayName": { "value": "[variables('appGatewayName')]" },
           "vnetName": { "value": "[variables('vnetName')]" },
-          "publicIpName": {"value": "[variables('publicIpName')]"}
+          "publicIpName": { "value": "[variables('publicIpName')]" }
         }
       }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-networking",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/buildingblocks/network/azuredeploy.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "_artifactsLocation": {
+            "value": "[parameters('environmentReference')._artifactsLocation]"
+          },
+          "prefix": {
+            "value": "parameters('environmentReference').prefix"
+          },
+          "serviceName": {
+            "value": "zdt"
+          },
+          "webAppUrlV1": {
+            "value": "[toLower(concat('http://',parameters('environmentReference').prefix,'-webapp-','v1.azurewebsites.net'))]"
+          },
+          "webAppUrlV2": {
+            "value": "[toLower(concat('http://',parameters('environmentReference').prefix,'-webapp-','v2.azurewebsites.net'))]",
+            "metadata": {
+              "description": "URL of Azure Web App 2"
+            }
+          }
+        }
+      },
+
+      "outputs": {}
     }
-  ],
-  "outputs": {}
-}

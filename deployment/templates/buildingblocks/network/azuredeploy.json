@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "securestring"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "serviceName": {
+      "type": "string"
+    },
+    "webAppUrlV1": {
+      "type": "string",
+      "metadata": {
+        "description": "URL of Azure Web App 1"
+      }
+    },
+    "webAppUrlV2": {
+      "type": "string",
+      "metadata": {
+        "description": "URL of Azure Web App 2"
+      }
+    }
+  },
+  "variables": {
+    "trafficManagerName": "[toLower(concat(parameters(prefix),'-',parameters('serviceName'),'-tfm'))]",
+    "appGatewayName": "[toLower(concat(parameters(prefix),'-',parameters('serviceName'),'-agw'))]",
+    "appGatewayPublicIpName": "[toLower(concat(parameters(prefix),'-',parameters('serviceName'),'-pip'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-appgateway",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/appgateway.json]"
+        },
+        "parameters": {
+          "name": {
+            "value": "[variables('appGatewayName')]"
+          },
+          "webAppUrlV1": {
+            "value": "[parameters('webAppUrlV1')]"
+          },
+          "webAppUrlV2": {
+            "value": "[parameters('webAppUrlV2')]"
+          },
+          "publicIpName": {
+            "value": "[variables('appGatewayPublicIpName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-trafficmanager",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "deploy-appgateway"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/trafficmanager.json]"
+        },
+        "parameters": {
+          "name": {
+            "value": "[variables('trafficManagerName')]"
+          },
+          "appGatewayPublicIpName": {
+            "value": "[variables('appGatewayPublicIpName')]"
+          }
+        }
+      }
+    }
+
+  ]
+}
