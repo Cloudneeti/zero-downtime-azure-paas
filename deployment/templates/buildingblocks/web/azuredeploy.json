@@ -168,7 +168,7 @@
             "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').hostingPlanServiceName,'-appsvcplan'))]"
           },
           "WebAppName": {
-            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp'))]"
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp-',parameters('packageVersion')))]"
           },
           "functionEndpoint": {
             "value": "[concat('http://',variables('functionAppName'),'.azurewebsites.net')]"
