@@ -1,0 +1,104 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webtestName": {
+      "type": "string"
+    },
+    "alertrulesName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "appName": {
+      "type": "string"
+    },
+    "webTestUrl": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "The URL for traffic manager"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "microsoft.insights/alertrules",
+      "name": "[parameters('alertrulesName')]",
+      "apiVersion": "2014-04-01",
+      "location": "[parameters('location')]",
+      "tags": {
+        "[concat('hidden-link:', resourceId('microsoft.insights/components/', parameters('appName')))]": "Resource",
+        "[concat('hidden-link:', resourceId('microsoft.insights/webtests/', parameters('webtestName')))]": "Resource"
+      },
+      "properties": {
+        "name": "[parameters('alertrulesName')]",
+        "isEnabled": true,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('microsoft.insights/webtests', parameters('webtestName'))]",
+            "metricNamespace": null,
+            "metricName": "zerodowntime"
+          },
+          "windowSize": "PT5M",
+          "failedLocationCount": 3
+        },
+        "action": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+          "sendToServiceOwners": true,
+          "customEmails": [
+
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('microsoft.insights/webtests', parameters('webtestName'))]"
+      ]
+    },
+    {
+      "type": "microsoft.insights/webtests",
+      "name": "[parameters('webtestName')]",
+      "apiVersion": "2014-04-01",
+      "location": "[parameters('location')]",
+      "tags": {
+        "[concat('hidden-link:', resourceId('microsoft.insights/components/', parameters('appName')))]": "Resource"
+      },
+      "properties": {
+        "SyntheticMonitorId": "[parameters('webtestName')],",
+        "Name": "[parameters('webtestName')]",
+        "kind": "ping",
+        "Description": "",
+        "Enabled": true,
+        "Frequency": 300,
+        "Timeout": 30,
+        "Locations": [
+          {
+            "Id": "us-il-ch1-azr"
+          },
+          {
+            "Id": "us-ca-sjc-azr"
+          },
+          {
+            "Id": "us-tx-sn1-azr"
+          },
+          {
+            "Id": "us-va-ash-azr"
+          },
+          {
+            "Id": "us-fl-mia-edge"
+          }
+        ],
+        "Configuration": {
+          "WebTest": "[concat('<WebTest         Name=\"pingWebTest\"         Id=\"f96766a1-6205-45bd-a7dd-f275f5527e31\"         Enabled=\"True\"         CssProjectStructure=\"\"         CssIteration=\"\"         Timeout=\"30\"         WorkItemIds=\"\"         xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\"         Description=\"\"         CredentialUserName=\"\"         CredentialPassword=\"\"         PreAuthenticate=\"True\"         Proxy=\"default\"         StopOnError=\"False\"         RecordedResultFile=\"\"         ResultsLocale=\"\">        <Items>        <Request         Method=\"GET\"         Guid=\"ae8c1cc1-f22f-d47d-3b15-f259a9ee84fb\"         Version=\"1.1\"         Url=\"',parameters('webTestUrl'),'\"         ThinkTime=\"0\"         Timeout=\"30\"         ParseDependentRequests=\"True\"         FollowRedirects=\"True\"         RecordResult=\"True\"         Cache=\"False\"         ResponseTimeGoal=\"0\"         Encoding=\"utf-8\"         ExpectedHttpStatusCode=\"200\"         ExpectedResponseUrl=\"\"         ReportingName=\"\"         IgnoreHttpStatusCode=\"False\" />        </Items>        </WebTest>')]"
+        },
+        "provisioningState": "Succeeded"
+      },
+      "dependsOn": [
+
+      ]
+    }
+  ]
+}
