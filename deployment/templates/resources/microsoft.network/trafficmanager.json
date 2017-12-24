@@ -2,7 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "name": {
+      "prefix": {
+        "type": "string"
+      },
+      "serviceName": {
         "type": "string"
       },
       "appGatewayName": {
@@ -22,17 +25,20 @@
         "type": "string"
       }
     },
+    "variables": {
+      "trafficManagerName":"[concat(parameters('prefix'),'-',parameters('serviceName'),'-','tfm')]"
+    },
     "resources": [
         {
             "apiVersion": "2017-05-01",
-            "type": "Microsoft.Network/trafficmanagerprofiles",
-            "name": "[parameters('name')]",
+            "type": "Microsoft.Network/trafficManagerProfiles",
+            "name": "[variables('trafficManagerName')]",
             "location": "global",
           "properties": {
             "profileStatus": "Enabled",
             "trafficRoutingMethod": "[parameters('trafficRoutingMethod')]",
             "dnsConfig": {
-              "relativeName": "[parameters('name')]",
+              "relativeName": "[variables('trafficManagerName')]",
               "ttl": 300
             },
             "monitorConfig": {

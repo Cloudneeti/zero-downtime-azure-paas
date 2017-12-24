@@ -41,7 +41,7 @@
         8,
         9,
         10
-      ],
+      ],      
       "defaultValue": 2,
       "metadata": {
         "description": "Number of instances"
@@ -53,23 +53,17 @@
     "serviceName": {
       "type": "string"
     },
-    "appGatewayName": {
+    "appGatewayName":{
       "type": "string"
     },
-    "webAppUrlV1": {
+    "publicIpName":{
+      "type": "string"
+    },
+    "webAppUrl": {
       "type": "string",
       "metadata": {
         "description": "URL of Azure Web App 1"
       }
-    },
-    "webAppUrlV2": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of Azure Web App 1"
-      }
-    },
-    "publicIpName": {
-      "type": "string"
     },
     "probeEnabled": {
       "type": "bool",
@@ -80,18 +74,20 @@
     }
   },
   "variables": {
-    "virtualNetworkName": "[concat(parameters('prefix'),'-',parameters('serviceName'),'-vnet')]",
-    "subnetName": "appGatewaySubnet",
+    "applicationGatewayName":"[parameters('appGatewayName')]",
+    "publicIPAddressName":"[parameters('publicIpName')]",
+    "virtualNetworkName": "[concat(parameters('prefix'),'-',parameters('serviceName'),'-','vnet')]",
+    "subnetName": "[concat(parameters('prefix'),'-',parameters('serviceName'),'-','snet')]",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-    "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIpName'))]",
-    "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',parameters('appGatewayName'))]"
+    "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+    "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('applicationGatewayName'))]"
   },
   "resources": [
     {
       "apiVersion": "2017-06-01",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('publicIpName')]",
+      "name": "[variables('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
@@ -120,12 +116,12 @@
     },
     {
       "apiVersion": "2017-06-01",
-      "name": "[parameters('appGatewayName')]",
+      "name": "[variables('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIpName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
       ],
       "properties": {
         "sku": {
@@ -167,10 +163,7 @@
             "properties": {
               "BackendAddresses": [
                 {
-                  "IpAddress": "[parameters('webAppUrlV1')]"
-                },
-                {
-                  "IpAddress": "[parameters('webAppUrlV2')]"
+                  "IpAddress": "[parameters('webAppUrl')]"
                 }
               ]
             }

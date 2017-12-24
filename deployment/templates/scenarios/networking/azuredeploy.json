@@ -22,43 +22,64 @@
     }
   },
   "variables": {
-    "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]",
-    "appGatewayName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-agt'))]",
-    "vnetName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-vnet'))]",
-    "publicIpName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-pip'))]",
-    "webAppUrl": "[toLower(concat('http://',concat(parameters('network').appGateway.webAppName,'.azurewebsites.net')))]"
+    "applicationGatewayName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-','agw')]",
+    "publicIPAddressName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-','pip')]"
   },
   "resources": [
     {
       "apiVersion": "2017-05-10",
-      "name": "deploy-networking",
+      "name": "deploy-appgateway",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/buildingblocks/network/azuredeploy.json')]",
-          "contentVersion": "1.0.0.0"
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/appgateway.json')]"
         },
         "parameters": {
-          "_artifactsLocation": {
-            "value": "[parameters('environmentReference')._artifactsLocation]"
-          },
           "prefix": {
-            "value": "parameters('environmentReference').prefix"
+            "value": "[parameters('environmentReference').prefix]"
           },
           "serviceName": {
-            "value": "zdt"
+            "value": "[parameters('network').appGateway.serviceName]"
           },
-          "webAppUrlV1": {
+          "appGatewayName":{
+              "value":"[variables('applicationGatewayName')]"
+          },
+          "publicIpName":{
+            "value":"[variables('publicIPAddressName')]"
+          },
+          "webAppUrl": {
             "value": "[toLower(concat(parameters('environmentReference').prefix,'-webapp-','v1.azurewebsites.net'))]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-trafficmanager",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/trafficmanager.json')]"
+        },
+        "parameters": {
+          "prefix": {
+            "value": "[parameters('environmentReference').prefix]"
           },
-          "webAppUrlV2": {
-            "value": "[toLower(concat(parameters('environmentReference').prefix,'-webapp-','v2.azurewebsites.net'))]"
+          "serviceName":{
+            "value":"[parameters('network').trafficManager.serviceName]"
+          },
+          "appGatewayName": {
+            "value": "[variables('applicationGatewayName')]"
+          },
+          "appGatewayPublicIpName": {
+            "value": "[variables('publicIPAddressName')]"
           }
         }
       }
     }
+
   ],
 
       "outputs": {}

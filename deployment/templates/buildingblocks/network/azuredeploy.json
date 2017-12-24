@@ -10,24 +10,10 @@
     },
     "serviceName": {
       "type": "string"
-    },
-    "webAppUrlV1": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of Azure Web App 1"
-      }
-    },
-    "webAppUrlV2": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of Azure Web App 2"
-      }
     }
   },
   "variables": {
-    "trafficManagerName": "[toLower(concat(parameters('prefix'),'-',parameters('serviceName'),'-tfm'))]",
-    "appGatewayName": "[toLower(concat(parameters('prefix'),'-',parameters('serviceName'),'-agw'))]",
-    "appGatewayPublicIpName": "[toLower(concat(parameters('prefix'),'-',parameters('serviceName'),'-pip'))]"
+    
   },
   "resources": [
     {
@@ -46,43 +32,11 @@
           "serviceName": {
             "value": "[parameters('serviceName')]"
           },
-          "appGatewayName": {
-            "value": "[variables('appGatewayName')]"
-          },
-          "webAppUrlV1": {
-            "value": "[parameters('webAppUrlV1')]"
-          },
-          "webAppUrlV2": {
-            "value": "[parameters('webAppUrlV2')]"
-          },
-          "publicIpName": {
-            "value": "[variables('appGatewayPublicIpName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "deploy-trafficmanager",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/trafficmanager.json')]"
-        },
-        "parameters": {
-          "name": {
-            "value": "[variables('trafficManagerName')]"
-          },
-          "appGatewayName": {
-            "value": "[variables('appGatewayName')]"
-          },
-          "appGatewayPublicIpName": {
-            "value": "[variables('appGatewayPublicIpName')]"
+          "webAppUrl": {
+            "value": "[toLower(concat(parameters('prefix'),'-webapp-','v1.azurewebsites.net'))]"
           }
         }
       }
     }
-
   ]
 }

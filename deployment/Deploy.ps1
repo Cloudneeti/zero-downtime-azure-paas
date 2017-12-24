@@ -465,20 +465,18 @@ else {
     log "Waiting for background job to initiate"
     Start-Sleep 20
 
+     #Get deployment status
+     while ((Get-Job -Name '2-create' | Select-Object -Last 1).State -eq 'Running') {
+        Get-ARMDeploymentStatus -jobName '2-create'
+        Start-Sleep 5
+    }
+    
     log "Invoke Workload deployment."
     Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -packageVersion $packageVersion  -steps 3
 
     # Pause Session for Background Job to Initiate.
     log "Waiting for background job to initiate"
     Start-Sleep 20
-
-    #Get deployment status
-    while ((Get-Job -Name '2-create' | Select-Object -Last 1).State -eq 'Running') {
-        Get-ARMDeploymentStatus -jobName '2-create'
-        Start-Sleep 5
-    }
-    
-   
 
     #Get deployment status
     while ((Get-Job -Name '3-create' | Select-Object -Last 1).State -eq 'Running') {
