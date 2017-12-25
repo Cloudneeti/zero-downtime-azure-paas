@@ -58,6 +58,9 @@
       "apiVersion": "2017-05-10",
       "name": "deploy-trafficmanager",
       "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "deploy-appgateway"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {

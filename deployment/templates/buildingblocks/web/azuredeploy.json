@@ -170,8 +170,11 @@
           "WebAppName": {
             "value": "[toLower(concat(parameters('uniquePrefix'),'-webapp-',parameters('packageVersion')))]"
           },
-          "functionEndpoint": {
-            "value": "[concat('http://',variables('functionAppName'),'.azurewebsites.net')]"
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "functionName": {
+            "value": "CosmosDataAccessFunc"
           },
           "location": {
             "value": "[parameters('location')]"
@@ -220,5 +223,6 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+  }
 }
