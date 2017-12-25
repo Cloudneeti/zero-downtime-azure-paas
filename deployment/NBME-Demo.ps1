@@ -34,11 +34,13 @@ switch($Command)
 	}
 	spin
 	{
-		$resourceGroupName =  "$deploymentPrefix-workload-$packageVersion"
+		$resourceGroupName =  "$deploymentPrefix-networking-rg"
 		$webApps = "$deploymentPrefix-webapp-v1.azurewebsites.net","$deploymentPrefix-webapp-v2.azurewebsites.net"
+		$webApps = [String]::Join($webApps)
+		Write-Host $webApps
 		$appGateway = Get-AzureRmApplicationGateway -ResourceGroupName $resourceGroupName -Name "$deploymentPrefix-zdt-agw"
 		$backendPool = Get-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool'
-		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses ([String]::Join($webApps))
+		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool' -BackendIPAddresses "$deploymentPrefix-webapp-v1.azurewebsites.net","$deploymentPrefix-webapp-v2.azurewebsites.net"
 		
 		Set-AzureRmApplicationGateway -ApplicationGateway $appGateway
 
