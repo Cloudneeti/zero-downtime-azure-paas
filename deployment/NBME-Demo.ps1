@@ -19,8 +19,11 @@ param
     [string]$packageVersion
 )
 
-Install-Module 'AzureRM.Network'
-Clear-AzureRmContext -Scope CurrentUser
+if(!(Get-InstalledModule -Name 'AzureRM.Network' -ErrorAction SilentlyContinue))
+{
+	Write-Host 'Installing module AzureRM.Network'
+	Install-Module 'AzureRM.Network'
+}
 
 switch($Command)
 {
