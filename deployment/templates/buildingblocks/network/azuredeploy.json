@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "securestring"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "serviceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-appgateway",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'),'templates/resources/microsoft.network/appgateway.json')]"
+        },
+        "parameters": {
+          "prefix": {
+            "value": "[parameters('prefix')]"
+          },
+          "serviceName": {
+            "value": "[parameters('serviceName')]"
+          },
+          "webAppUrl": {
+            "value": "[toLower(concat(parameters('prefix'),'-webapp-','v1.azurewebsites.net'))]"
+          }
+        }
+      }
+    }
+  ]
+}

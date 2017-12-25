@@ -87,6 +87,13 @@
           "tags": {
             "tier": "network"
           }
+        },
+        "appGateway": {
+          "serviceName": "zdt",
+          "webAppName": "nbmepoc-v1",
+          "tags": {
+            "tier": "network"
+          }
         }
       }
     }

@@ -26,8 +26,8 @@ namespace ZeroDowntime.Functions
             {
                 //string endpoint = "https://zdcosmosdb.documents.azure.com:443/";
                 //string authkey = "8eIG2CLmqhjBLDWAOv9II2zLoY65WxOwKnmShyYq1I3TZStzRHIFejWIgczFvC2zi2SmTcEtr1mtpTNFdBdyXw==";
-                string endpoint = ConfigurationManager.AppSettings["endpoint"];
-                string authKey = ConfigurationManager.AppSettings["authkey"];
+                string endpoint = ConfigurationManager.AppSettings["CosmosDbEndpoint"];
+                string authKey = ConfigurationManager.AppSettings["CosmosDbKey"];
                 DocumentDBRepository<Item>.Initialize(endpoint, authKey);
                 if (req.Method == HttpMethod.Get)
                 {

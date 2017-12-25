@@ -22,25 +22,68 @@
     }
   },
   "variables": {
-    "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]"
+    "applicationGatewayName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-','agw')]",
+    "publicIPAddressName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-','pip')]"
   },
   "resources": [
-    { 
-      "apiVersion": "2017-05-10", 
-      "name": "deploy-trafficmanager", 
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-appgateway",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [],
-      "properties": { 
-         "mode": "Incremental",
+      "properties": {
+        "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/trafficmanager.json')]",
-          "contentVersion": "1.0.0.0"
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/appgateway.json')]"
         },
-        "parameters": { 
-        "name":{"value": "[variables('trafficManagerName')]"}
+        "parameters": {
+          "prefix": {
+            "value": "[parameters('environmentReference').prefix]"
+          },
+          "serviceName": {
+            "value": "[parameters('network').appGateway.serviceName]"
+          },
+          "appGatewayName":{
+              "value":"[variables('applicationGatewayName')]"
+          },
+          "publicIpName":{
+            "value":"[variables('publicIPAddressName')]"
+          },
+          "webAppUrl": {
+            "value": "[toLower(concat(parameters('environmentReference').prefix,'-webapp-','v1.azurewebsites.net'))]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "deploy-trafficmanager",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "deploy-appgateway"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.network/trafficmanager.json')]"
+        },
+        "parameters": {
+          "prefix": {
+            "value": "[parameters('environmentReference').prefix]"
+          },
+          "serviceName":{
+            "value":"[parameters('network').trafficManager.serviceName]"
+          },
+          "appGatewayName": {
+            "value": "[variables('applicationGatewayName')]"
+          },
+          "appGatewayPublicIpName": {
+            "value": "[variables('publicIPAddressName')]"
+          }
         }
       }
     }
+
   ],
-  "outputs": {}
+
+      "outputs": {}
 }

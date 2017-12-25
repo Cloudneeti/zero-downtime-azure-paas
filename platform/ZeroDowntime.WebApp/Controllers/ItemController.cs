@@ -17,13 +17,19 @@ namespace ZeroDowntime.WebApp.Controllers
         {
             string response = null;
             ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
-            string requesturi = ConfigurationManager.AppSettings["requesturi"];
+            string requesturi = ConfigurationManager.AppSettings["MiddleTierEndpoint"];
             Task.Run(
                 async()=> {
                     response = await HttpHelper.GetAsync(requesturi);
                 }).Wait();
 
-            Item[] items = JsonConvert.DeserializeObject<Item[]>(response);
+            Item[] items = new Item[] { new Item { Name = "Site1", Description = "nbme site", Summary = "test site" } };
+
+            if(!string.IsNullOrEmpty(response) && !string.IsNullOrWhiteSpace(response))
+            {
+                items = JsonConvert.DeserializeObject<Item[]>(response);
+            }
+           
 
             //var items = new Item[] { new Item {Id="01",Description="tewst",Name="asdsds" } };
             return View(items);

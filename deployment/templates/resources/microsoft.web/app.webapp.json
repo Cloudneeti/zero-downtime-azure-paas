@@ -17,7 +17,10 @@
         "description": "Name of web site."
       }
     },
-    "functionEndpoint": {
+    "functionAppName": {
+      "type": "string"
+    },
+    "functionName": {
       "type": "string"
     },
     "location": {
@@ -67,7 +70,7 @@
               },
               {
                 "name": "MiddleTierEndpoint",
-                "value": "[parameters('functionEndpoint')]"
+                "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), parameters('functionName')),'2015-08-01').trigger_url)]"
               }
             ]
           }
