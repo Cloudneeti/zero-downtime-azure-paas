@@ -23,7 +23,8 @@
   },
   "variables": {
     "applicationGatewayName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').appGateway.serviceName,'-','agw')]",
-    "publicIPAddressName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-','pip')]"
+    "publicIPAddressName": "[concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-','pip')]",
+    "appInsightsName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('operations').appInsights.serviceName,'-appinsights'))]"
   },
   "resources": [
     {
@@ -42,11 +43,11 @@
           "serviceName": {
             "value": "[parameters('network').appGateway.serviceName]"
           },
-          "appGatewayName":{
-              "value":"[variables('applicationGatewayName')]"
+          "appGatewayName": {
+            "value": "[variables('applicationGatewayName')]"
           },
-          "publicIpName":{
-            "value":"[variables('publicIPAddressName')]"
+          "publicIpName": {
+            "value": "[variables('publicIPAddressName')]"
           },
           "webAppUrl": {
             "value": "[toLower(concat(parameters('environmentReference').prefix,'-webapp-','v1.azurewebsites.net'))]"
@@ -70,14 +71,46 @@
           "prefix": {
             "value": "[parameters('environmentReference').prefix]"
           },
-          "serviceName":{
-            "value":"[parameters('network').trafficManager.serviceName]"
+          "serviceName": {
+            "value": "[parameters('network').trafficManager.serviceName]"
           },
           "appGatewayName": {
             "value": "[variables('applicationGatewayName')]"
           },
           "appGatewayPublicIpName": {
             "value": "[variables('publicIPAddressName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "webAlerts",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [ "deploy-trafficmanager" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.appinsights/webtest.json')]"
+        },
+        "parameters": {
+          "prefix": {
+            "value": "[parameters('environmentReference').prefix]"
+          },
+          "appName": {
+            "value": "[variables('appInsightsName')]"
+          },
+          "webtestName": {
+            "value": "[parameters('operations').appInsights.webtestName]"
+          },
+          "alertrulesName": {
+            "value": "[parameters('operations').appInsights.alertrulesName]"
+          },
+          "location": {
+            "value": "[parameters('environmentReference').location]"
+          },
+          "webTestUrl": {
+            "value": "[concat('http://',concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-','tfm'),'.trafficmanager.net')]"
           }
         }
       }
