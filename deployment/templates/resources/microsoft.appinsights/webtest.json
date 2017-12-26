@@ -30,41 +30,6 @@
   },
   "resources": [
     {
-      "type": "microsoft.insights/alertrules",
-      "name": "[parameters('alertrulesName')]",
-      "apiVersion": "2014-04-01",
-      "location": "[parameters('location')]",
-      "tags": {
-        "[concat('hidden-link:', resourceId(variables('operationsResourceGroup'),'microsoft.insights/components/', parameters('appName')))]": "Resource",
-        "[concat('hidden-link:', resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests/', parameters('webtestName')))]": "Resource"
-      },
-      "properties": {
-        "name": "[parameters('alertrulesName')]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests', parameters('webtestName'))]",
-            "metricNamespace": null,
-            "metricName": "zerodowntime"
-          },
-          "windowSize": "PT5M",
-          "failedLocationCount": 3
-        },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": [
-
-          ]
-        }
-      },
-      "dependsOn": [
-        "[resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests', parameters('webtestName'))]"
-      ]
-    },
-    {
       "type": "microsoft.insights/webtests",
       "name": "[parameters('webtestName')]",
       "apiVersion": "2014-04-01",
@@ -104,6 +69,41 @@
       },
       "dependsOn": [
 
+      ]
+    },
+    {
+      "type": "microsoft.insights/alertrules",
+      "name": "[parameters('alertrulesName')]",
+      "apiVersion": "2014-04-01",
+      "location": "[parameters('location')]",
+      "tags": {
+        "[concat('hidden-link:', resourceId(variables('operationsResourceGroup'),'microsoft.insights/components/', parameters('appName')))]": "Resource",
+        "[concat('hidden-link:', resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests/', parameters('webtestName')))]": "Resource"
+      },
+      "properties": {
+        "name": "[parameters('alertrulesName')]",
+        "isEnabled": true,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests', parameters('webtestName'))]",
+            "metricNamespace": null,
+            "metricName": "zerodowntime"
+          },
+          "windowSize": "PT5M",
+          "failedLocationCount": 3
+        },
+        "action": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+          "sendToServiceOwners": true,
+          "customEmails": [
+
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests', parameters('webtestName'))]"
       ]
     }
   ]
