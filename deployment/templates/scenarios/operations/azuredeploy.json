@@ -82,35 +82,6 @@
           }
         }
       }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "webAlerts",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "appInsights" ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.appinsights/webtest.json')]"
-        },
-        "parameters": {
-          "appName": {
-            "value": "[variables('appInsightsName')]"
-          },
-          "webtestName": {
-            "value": "[parameters('operations').appInsights.webtestName]"
-          },
-          "alertrulesName": {
-            "value": "[parameters('operations').appInsights.alertrulesName]"
-          },
-          "location": {
-            "value": "[parameters('environmentReference').location]"
-          },
-          "webTestUrl": {
-            "value": "[concat('http://',variables('trafficManagerName'),'.trafficmanager.net')]"
-          }
-        }
-      }
     }
   ],
       "outputs": {}
