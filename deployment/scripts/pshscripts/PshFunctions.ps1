@@ -386,6 +386,19 @@ function Get-DeploymentData($hash) {
     $parametersData.parameters.environmentReference.value.tenantDomain = $tenantDomain
     $parametersData.parameters.environmentReference.value.location = $location
 	$parametersData.parameters.environmentReference.value.packageVersion = $packageVersion
+
+	$webTestParameter  = Get-Content "$scriptroot\templates\webtest.parameters.json" | ConvertFrom-Json
+	$webTestParameter.parameters.prefix.value=$resourceGroupPrefix
+	$webTestParameter.parameters.appName.value="$resourceGroupPrefix-$parameterData.parameters.operations.value.appInsights.serviceName-appinsights"
+	$webTestParameter.parameters.webtestName.value=$parametersData.parameters.operations.value.appInsights.webtestName
+	$webTestParameter.parameters.alertrulesName.value=$parametersData.parameters.operations.value.appInights.alertrulesName
+	$webTestParameter.parameters.location.value=$location
+	$webTestParameter.parameters.webTestUrl.value=
+	"http://$resourceGroupPrefix-$parameterData.parameters.operations.value.appInsights.serviceName-appinsights-tfm.trafficmanager.net"
+	Remove-Item "$scriptroot\templates\webtest.parameters.json"
+	($webTestParameter | ConvertTo-Json -Depth 3) | Out-File "$scriptroot\templates\webtest.parameters.json"
+
+
     ( $parametersData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $tmp
     $deploymentName, $tmp
 }
