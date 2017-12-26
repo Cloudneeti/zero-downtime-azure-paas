@@ -108,7 +108,7 @@ param
     [Alias("dpwd")]
     [string]$deploymentPassword = 'null',
 
-    #
+    #package version
     [Parameter(Mandatory = $true,
     ParameterSetName = "Deployment",
     Position = 9)]
