@@ -202,6 +202,17 @@
       ]]></Code>
     </Task>
   </UsingTask>
+  <Target Name="ClearWebApp" BeforeTargets="Build">
+	 <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
+        <Output TaskParameter="Result" ItemName="ever" />
+    </XmlPeek>
+    <Message Text="Clear Target Artifact version: @(ever)" Importance="high" />
+    <PropertyGroup>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(ever)\webapp</ArtifactsFolder>
+    </PropertyGroup>
+    <Message Text="Delete Existing Web App" />
+    <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
+  </Target>
   <Target Name="ZipWebApp" AfterTargets="Build">
     <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='WebAppVersion']/@value">
       <Output TaskParameter="Result" ItemName="fever" />
@@ -212,10 +223,6 @@
     </PropertyGroup>
     <Message Text="Zip Web App" />
     <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />
-  </Target>
-  <Target Name="ClearFunctions" BeforeTargets="Build">
-    <Message Text="Delete Existing Web App" />
-    <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
   </Target>
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.19.1\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.19.1\build\Microsoft.Azure.DocumentDB.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
