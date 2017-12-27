@@ -389,12 +389,11 @@ function Get-DeploymentData($hash) {
 
 	$webTestParameter  = Get-Content "$scriptroot\templates\webtest.parameters.json" | ConvertFrom-Json
 	$webTestParameter.parameters.prefix.value=$resourceGroupPrefix
-	$webTestParameter.parameters.appName.value="$resourceGroupPrefix-$parameterData.parameters.operations.value.appInsights.serviceName-appinsights"
+	$webTestParameter.parameters.appName.value='$resourceGroupPrefix-$parametersData.parameters.operations.value.appInsights.serviceName-appinsights'
 	$webTestParameter.parameters.webtestName.value=$parametersData.parameters.operations.value.appInsights.webtestName
-	$webTestParameter.parameters.alertrulesName.value=$parametersData.parameters.operations.value.appInights.alertrulesName
+	$webTestParameter.parameters.alertrulesName.value=$parametersData.parameters.operations.value.appInsights.alertrulesName
 	$webTestParameter.parameters.location.value=$location
-	$webTestParameter.parameters.webTestUrl.value=
-	"http://$resourceGroupPrefix-$parameterData.parameters.operations.value.appInsights.serviceName-appinsights-tfm.trafficmanager.net"
+	$webTestParameter.parameters.webTestUrl.value='http://$resourceGroupPrefix-$parametersData.parameters.operations.value.appInsights.serviceName-appinsights-tfm.trafficmanager.net'
 	Remove-Item "$scriptroot\templates\webtest.parameters.json"
 	($webTestParameter | ConvertTo-Json -Depth 3) | Out-File "$scriptroot\templates\webtest.parameters.json"
 
