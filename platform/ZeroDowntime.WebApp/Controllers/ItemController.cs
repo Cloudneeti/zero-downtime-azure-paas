@@ -7,14 +7,30 @@ using System.Web.Mvc;
 using ZeroDowntime.Models;
 using Newtonsoft.Json;
 using System.Configuration;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace ZeroDowntime.WebApp.Controllers
 {
     public class ItemController : Controller
     {
+        private RequestTelemetry telemetryRequest=new RequestTelemetry();
+        private TelemetryClient telemetryClient;
+
+        public ItemController()
+        {
+            this.telemetryClient = new TelemetryClient() {
+                InstrumentationKey = ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"] };
+
+            this.telemetryRequest.GenerateOperationId();
+            this.telemetryClient.Context.Operation.Id = this.telemetryRequest.Id;
+            this.telemetryRequest.Context.Operation.Name = $"GetItems-{ConfigurationManager.AppSettings["WebAppVersion"]}";
+        }
         // GET: Item
         public ActionResult Index()
         {
+            var requestStartTime = DateTime.UtcNow;
             string response = null;
             ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
             string requesturi = ConfigurationManager.AppSettings["MiddleTierEndpoint"];
@@ -29,8 +45,8 @@ namespace ZeroDowntime.WebApp.Controllers
             {
                 items = JsonConvert.DeserializeObject<Item[]>(response);
             }
-           
 
+            this.telemetryClient.TrackRequest($"GetItems-{ConfigurationManager.AppSettings["WebAppVersion"]}", requestStartTime, DateTime.UtcNow - requestStartTime, "200", true);
             //var items = new Item[] { new Item {Id="01",Description="tewst",Name="asdsds" } };
             return View(items);
         }

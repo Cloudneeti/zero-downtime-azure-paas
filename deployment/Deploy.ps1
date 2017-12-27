@@ -497,8 +497,8 @@ else {
         Start-Sleep 5
     }
 	
-	log "create web test"
-	New-AzureRmResourceGroupDeployment -Name "CreateWebTest" -ResourceGroupName "$deploymentPrefix-operations-rg" -TemplateParameterFile "$ScriptRoot/templates/webtest.parameters.json" -TemplateFile "$ScriptRoot/templates/resources/microsoft.appinsights/webtest.json"
+	#log "create web test"
+	#New-AzureRmResourceGroupDeployment -Name "CreateWebTest" -ResourceGroupName "$deploymentPrefix-operations-rg" -TemplateParameterFile "$ScriptRoot/templates/webtest.parameters.json" -TemplateFile "$ScriptRoot/templates/resources/microsoft.appinsights/webtest.json"
 
 <#
     ########### Create Azure Active Directory apps in default directory ###########

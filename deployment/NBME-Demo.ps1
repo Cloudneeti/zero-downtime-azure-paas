@@ -3,18 +3,18 @@ param
 (
 	#commands
 	[Parameter(Mandatory=$true)]
-	[ValidateSet("Deploy","Spin","remove")]
+	[ValidateSet("Deploy","Ping","Spin","remove")]
 	[string]$Command,
 
-	[Parameter(Mandatory=$true)]
+	[Parameter(Mandatory=$false)]
 	[string]$adminEmail,
 
 	 #Any 5 length prefix starting with an alphabet.
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$deploymentPrefix,
 
 	 #package version
-	 [Parameter(Mandatory = $true)]
+	 [Parameter(Mandatory = $false)]
 	[ValidateSet("v1","v2")]
     [string]$packageVersion
 )
@@ -25,12 +25,19 @@ if(!(Get-InstalledModule -Name 'AzureRM.Network' -ErrorAction SilentlyContinue))
 	Install-Module 'AzureRM.Network'
 }
 
+$scriptRoot = Split-Path $MyInvocation.MyCommand.Path
+
 switch($Command)
 {
 
 	Deploy
 	{
 		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId '2b781bdf-80f1-45f0-8806-e3ab1679a814' -tenantDomain 'pcidemoxoutlook.onmicrosoft.com' -subscriptionId '0e322896-86cf-4b55-95d9-0e6bdbec1c1c' -globalAdminUsername 'unmeshv@avyanconsulting.com' -location 'eastus' -deploymentPassword 'Hcbnt54%kQoNs62' -packageVersion $packageVersion
+	}
+	Ping{
+		$parameters = Get-Content "$ScriptRoot/templates/webtest.parameters.json" | ConvertFrom-Json
+
+		New-AzureRmResourceGroupDeployment -Name "CreateWebTest" -ResourceGroupName "$($parameters.parameters.prefix.value)-operations-rg" -TemplateParameterFile "$ScriptRoot/templates/webtest.parameters.json" -TemplateFile "$ScriptRoot/templates/resources/microsoft.appinsights/webtest.json"
 	}
 	spin
 	{
