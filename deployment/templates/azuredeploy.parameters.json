@@ -65,7 +65,7 @@
     "operations": {
       "value": {
         "appInsights": {
-          "webtestName": "zdt",
+          "webtestName": "pingtest",
           "alertrulesName": "zdtAlerts",
           "serviceName": "zdt",
           "tags": {

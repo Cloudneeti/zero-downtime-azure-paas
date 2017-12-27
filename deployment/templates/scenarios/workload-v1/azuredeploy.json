@@ -200,7 +200,7 @@
             "value": "[concat(parameters('environmentReference')._artifactsLocation,'artifacts/',parameters('environmentReference').packageVersion,'/webapp/FrontEndWebApp.zip')]"
           },
           "appInsightsName": {
-            "value": "[variables('appInsightName')]"
+            "value": "[concat(variables('appInsightName'))]"
           },
           "appInsightsResourceGroup": {
             "value": "[variables('appInsightsResourceGroup')]"

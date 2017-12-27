@@ -103,7 +103,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId(variables('operationsResourceGroup'),'microsoft.insights/webtests', parameters('webtestName'))]"
+        "[parameters('webtestName')]"
       ]
     }
   ]

@@ -62,9 +62,13 @@
       "properties": {
         "name": "[parameters('WebAppName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]",
         "siteConfig": {
           "appSettings": [
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
+
+            },
             {
               "name": "MiddleTierEndpoint",
               "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), parameters('functionName')),'2015-08-01').trigger_url)]"
@@ -90,20 +94,8 @@
           }
         }
       ]
-    },
-    {
-      "apiVersion": "2014-04-01",
-      "name": "webapp-insights",
-      "type": "microsoft.insights/components",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/Sites', parameters('WebAppName'))]"
-      ],
-      "properties": {
-        "ApplicationId": "[parameters('WebAppName')]"
-      }
     }
   ],
-    "outputs": {
-    }
+  "outputs": {
+  }
 }
