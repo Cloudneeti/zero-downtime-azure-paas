@@ -52,12 +52,12 @@ switch($Command)
 	}
 	remove
 	{
-		$resourceGroupName =  "$deploymentPrefix-workload-$packageVersion"
-		
-		$appGateway = Get-AzureRmApplicationGateway -ResourceGroupName $resourceGroupName -Name "$deploymentPrefix-zdt-agw"
+		$resourceGroupName =  "$deploymentPrefix-workload-$packageVersion-rg"
+		$operationsResourceGroup = "$deploymentPrefix-networking-rg"
+		$sites=@("$deploymentPrefix-webapp-v2.azurewebsites.net")
+		$appGateway = Get-AzureRmApplicationGateway -ResourceGroupName $operationsResourceGroup -Name "$deploymentPrefix-zdt-agw"
 		$backendPool = Get-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool'
-		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses 
-		"$deploymentPrefix-webapp-v2.azurewebsites.net"
+		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses $sites
 		
 		Set-AzureRmApplicationGateway -ApplicationGateway $appGateway
 
