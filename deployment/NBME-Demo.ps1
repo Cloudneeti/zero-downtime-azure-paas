@@ -32,7 +32,7 @@ switch($Command)
 
 	Deploy
 	{
-		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId '2b781bdf-80f1-45f0-8806-e3ab1679a814' -tenantDomain 'pcidemoxoutlook.onmicrosoft.com' -subscriptionId '0e322896-86cf-4b55-95d9-0e6bdbec1c1c' -globalAdminUsername 'unmeshv@avyanconsulting.com' -location 'eastus' -deploymentPassword 'Hcbnt54%kQoNs62' -packageVersion $packageVersion
+		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId '<Tenant ID>' -tenantDomain '<Tenant Domain Name>' -subscriptionId '<Subscription ID>' -globalAdminUsername $adminEmail -location 'eastus' -deploymentPassword 'Hcbnt54%kQoNs62' -packageVersion $packageVersion
 	}
 	Ping{
 		$parameters = Get-Content "$ScriptRoot/templates/webtest.parameters.json" | ConvertFrom-Json
@@ -57,11 +57,11 @@ switch($Command)
 		$sites=@("$deploymentPrefix-webapp-v2.azurewebsites.net")
 		$appGateway = Get-AzureRmApplicationGateway -ResourceGroupName $operationsResourceGroup -Name "$deploymentPrefix-zdt-agw"
 		$backendPool = Get-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool'
-		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses $sites
+		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses $sites -Name 'appGatewayBackendPool'
 		
 		Set-AzureRmApplicationGateway -ApplicationGateway $appGateway
 
-		Remove-AzureRmResourceGroup -Name $resourceGroupName
+		Remove-AzureRmResourceGroup -Name $resourceGroupName -Force
 	}
 
 }
