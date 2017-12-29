@@ -97,5 +97,10 @@ namespace ZeroDowntime.Core
             return results;
         }
 
+        public static async Task<Item> GetItemAsync(string docLink)
+        {
+            return await client.ReadDocumentAsync<Item>(docLink);
+        }
+
     }
 }

@@ -29,7 +29,7 @@ namespace ZeroDowntime.WebApp
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-            var httpContent = new StringContent(postBody, Encoding.UTF8, "application/json");
+            var httpContent = new StringContent(postBody);
 
             var response = await httpClient.PostAsync(requestUri,httpContent);
 

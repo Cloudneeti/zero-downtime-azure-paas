@@ -8,18 +8,8 @@ namespace ZeroDowntime.Core
 {
     public class Item
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
-
-        [JsonProperty(PropertyName = "summary")]
+        public DateTime RequestTime { get; set; }
+        public string Version { get; set; }
         public string Summary { get; set; }
-
-        [JsonProperty(PropertyName = "description")]
-        public string Description { get; set; }
-
-
     }
 }
