@@ -63,6 +63,7 @@
         "name": "[parameters('WebAppName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
         "siteConfig": {
+          "alwaysOn": true,
           "appSettings": [
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",

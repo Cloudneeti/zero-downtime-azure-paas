@@ -41,6 +41,7 @@ namespace ZeroDowntime.WebApp.Controllers
             ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
             string requesturi = ConfigurationManager.AppSettings["MiddleTierEndpoint"];
             var requestTime = DateTime.UtcNow;
+            var summary = $"request to version {ConfigurationManager.AppSettings["WebAppVersion"]} made on {requestTime}";
             Task.Run(
                 async () =>
                 {
@@ -50,7 +51,7 @@ namespace ZeroDowntime.WebApp.Controllers
                             {
                                 RequestTime = requestTime,
                                 Version = ConfigurationManager.AppSettings["WebAppVersion"],
-                                Summary=$"request to version {ConfigurationManager.AppSettings["WebAppVersion"]} made on {requestTime}"
+                                Summary = summary
                             }));
                     
                 }).Wait();
