@@ -6,17 +6,39 @@ param
 	[ValidateSet("Deploy","Ping","Spin","remove")]
 	[string]$Command,
 
-	[Parameter(Mandatory=$false)]
-	[string]$adminEmail,
+	 #package version
+	 [Parameter(Mandatory = $true)]
+	[ValidateSet("v1","v2")]
+    [string]$packageVersion,
 
 	 #Any 5 length prefix starting with an alphabet.
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory = $true)]
     [string]$deploymentPrefix,
 
-	 #package version
-	 [Parameter(Mandatory = $false)]
-	[ValidateSet("v1","v2")]
-    [string]$packageVersion
+	#global admin email
+	[Parameter(Mandatory=$true)]
+	[string]$globalAdminEmail,
+
+	#tenant id
+	[Parameter(Mandatory=$true)]
+	[string]$tenantId,
+
+	#subscription id
+	[Parameter(Mandatory=$true)]
+	[string]$subscriptionId,
+
+	#tenant domain
+	[Parameter(Mandatory=$true)]
+	[string]$tenantDomain,
+
+	#deployment password
+	[Parameter(Mandatory=$true)]
+	[string]$deploymentPassword,
+
+	#location
+	[Parameter(Mandatory=$false)]
+	[string]$location='eastus'
+
 )
 
 if(!(Get-InstalledModule -Name 'AzureRM.Network' -ErrorAction SilentlyContinue))
@@ -32,7 +54,7 @@ switch($Command)
 
 	Deploy
 	{
-		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId '<Tenant ID>' -tenantDomain '<Tenant Domain Name>' -subscriptionId '<Subscription ID>' -globalAdminUsername $adminEmail -location 'eastus' -deploymentPassword 'Hcbnt54%kQoNs62' -packageVersion $packageVersion
+		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId $tenantId -tenantDomain $tenantDomain -subscriptionId $subscriptionId -globalAdminUsername $globalAdminEmail -location $location -deploymentPassword $deploymentPassword -packageVersion $packageVersion
 	}
 	Ping{
 		$parameters = Get-Content "$ScriptRoot/templates/webtest.parameters.json" | ConvertFrom-Json

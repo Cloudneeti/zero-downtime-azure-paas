@@ -15,38 +15,51 @@ namespace ZeroDowntime.WebApp.Controllers
 {
     public class ItemController : Controller
     {
-        private RequestTelemetry telemetryRequest=new RequestTelemetry();
-        private TelemetryClient telemetryClient;
+        private static RequestTelemetry telemetryRequest = new RequestTelemetry();
+        private static TelemetryClient telemetryClient = new TelemetryClient()
+        {
+            InstrumentationKey = ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"]
+        };
 
         public ItemController()
         {
-            this.telemetryClient = new TelemetryClient() {
-                InstrumentationKey = ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"] };
+            ItemController.CreateTelemetryClient();
+        }
 
-            this.telemetryRequest.GenerateOperationId();
-            this.telemetryClient.Context.Operation.Id = this.telemetryRequest.Id;
-            this.telemetryRequest.Context.Operation.Name = $"GetItems-{ConfigurationManager.AppSettings["WebAppVersion"]}";
+        private static void CreateTelemetryClient()
+        {
+            telemetryRequest.GenerateOperationId();
+            telemetryClient.Context.Operation.Id = telemetryRequest.Id;
+            telemetryRequest.Context.Operation.Name = $"GetItems-{ConfigurationManager.AppSettings["WebAppVersion"]}";
         }
         // GET: Item
         public ActionResult Index()
         {
             var requestStartTime = DateTime.UtcNow;
-            string response = null;
+            string data = string.Empty;
+
             ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
             string requesturi = ConfigurationManager.AppSettings["MiddleTierEndpoint"];
+            var requestTime = DateTime.UtcNow;
             Task.Run(
-                async()=> {
-                    response = await HttpHelper.GetAsync(requesturi);
+                async () =>
+                {
+                    data = await HttpHelper.PostAsync(requesturi,
+                        JsonConvert.SerializeObject(
+                            new Item
+                            {
+                                RequestTime = requestTime,
+                                Version = ConfigurationManager.AppSettings["WebAppVersion"],
+                                Summary=$"request to version {ConfigurationManager.AppSettings["WebAppVersion"]} made on {requestTime}"
+                            }));
+                    
                 }).Wait();
 
-            Item[] items = new Item[] { new Item { Name = "Site1", Description = "nbme site", Summary = "test site" } };
 
-            if(!string.IsNullOrEmpty(response) && !string.IsNullOrWhiteSpace(response))
-            {
-                items = JsonConvert.DeserializeObject<Item[]>(response);
-            }
+            var items = JsonConvert.DeserializeObject<Item>(data);
 
-            this.telemetryClient.TrackRequest($"GetItems-{ConfigurationManager.AppSettings["WebAppVersion"]}", requestStartTime, DateTime.UtcNow - requestStartTime, "200", true);
+
+            telemetryClient.TrackRequest($"Get-{ConfigurationManager.AppSettings["WebAppVersion"]}", requestStartTime, DateTime.UtcNow - requestStartTime, "200", true);
             //var items = new Item[] { new Item {Id="01",Description="tewst",Name="asdsds" } };
             return View(items);
         }
@@ -63,14 +76,15 @@ namespace ZeroDowntime.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreateAsync([Bind(Include = "Id,Name,Description,Summary")] Item item)
         {
-           ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
-           string requesturi = ConfigurationManager.AppSettings["requesturi"];
+            ViewBag.WebAppVersion = ConfigurationManager.AppSettings["WebAppVersion"];
+            string requesturi = ConfigurationManager.AppSettings["requesturi"];
             string response = null;
-           var jsonItem = JsonConvert.SerializeObject(item);
-           Task.Run(
-           async () => {
-               response = await HttpHelper.PostAsync(requesturi, jsonItem);
-           }).Wait();
+            var jsonItem = JsonConvert.SerializeObject(item);
+            Task.Run(
+            async () =>
+            {
+                response = await HttpHelper.PostAsync(requesturi, jsonItem);
+            }).Wait();
 
             if (ModelState.IsValid)
             {

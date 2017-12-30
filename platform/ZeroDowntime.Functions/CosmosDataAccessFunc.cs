@@ -10,7 +10,7 @@ namespace ZeroDowntime.Functions
     using Microsoft.Azure.WebJobs.Host;
     using System.Collections.Generic;
     using System.Configuration;
-
+    using Newtonsoft.Json;
     /// <summary>
     /// azure function that access data from cosmos db
     /// and is triggered by http call from web app
@@ -32,21 +32,19 @@ namespace ZeroDowntime.Functions
                 if (req.Method == HttpMethod.Get)
                 {
                     var results = await DocumentDBRepository<Item>.GetItemsAsync("ToDoList", "Items");
-                    return req.CreateResponse(HttpStatusCode.OK, results);
-
+                    return req.CreateResponse(HttpStatusCode.OK, new
+                    {
+                        items = results
+                    });
                 }
                 else
                 {
-                    dynamic data = await req.Content.ReadAsAsync<object>();
-                    string name = data?.name;
-                    string description = data?.description;
-                    string summary = data?.summary;
-                    Item item = new Item();
-                    item.Name = name;
-                    item.Description = description;
-                    item.Summary = summary;
-                    await DocumentDBRepository<Item>.CreateItemAsync(item, "ToDoList", "Items");
-                    return req.CreateResponse(HttpStatusCode.Created);
+                    var input = await req.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<Item>(input);
+                    
+                    var createdItem=await DocumentDBRepository<Item>.CreateItemAsync(data, "ToDoList", "Items");
+                    var item = await DocumentDBRepository<Item>.GetItemAsync(createdItem.SelfLink);
+                    return req.CreateResponse(HttpStatusCode.Created, item);
                 }
             }
             catch(Exception ex)

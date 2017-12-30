@@ -100,7 +100,7 @@
             "value": "[concat('https://',variables('cosmosDbName'),'.documents.azure.com')]"
           },
           "cosmosDbKey": {
-            "value": "[[listKeys(resourceId(variables('cosomsDbResourceGroup'),'Microsoft.DocumentDB/databaseAccounts',variables('cosmosDbName')),'2015-11-06').primaryMasterKey]"
+            "value": "[listKeys(resourceId(variables('cosomsDbResourceGroup'),'Microsoft.DocumentDB/databaseAccounts',variables('cosmosDbName')),'2015-11-06').primaryMasterKey]"
           },
           "location": {
             "value": "[parameters('environmentReference').location]"
