@@ -242,7 +242,7 @@ Process {
             #List the AD Users
             log "AD Users: " Cyan -displaywithouttimestamp
             foreach ($actor in $actors) {
-                $upn = Get-AzureRmADUser -SearchString $actor
+                $upn = Get-AzureRmADUser -SearchString $actor -ErrorAction Continue
                 $fullUpn = $actor + '@' + $tenantDomain
                 if ($upn -ne $null )
                 {
@@ -268,10 +268,9 @@ Process {
                     if ($rgCount -eq 1)
                     {
                     $resourceGroupList | ForEach-Object { 
-                        $resourceGroupName = $_
-                        Get-AzureRmResourceGroup -Name $resourceGroupName | Out-Null
+                            $resourceGroupName = $_
                             log "Deleting Resource group $resourceGroupName" Yellow -displaywithouttimestamp
-                            Remove-AzureRmResourceGroup -Name $resourceGroupName -Force| Out-Null
+                            Remove-AzureRmResourceGroup -Name $resourceGroupName -Force -ErrorAction Continue | Out-Null
                             log "ResourceGroup $resourceGroupName was deleted successfully" Yellow -displaywithouttimestamp
                         }
                     }
@@ -280,7 +279,7 @@ Process {
                     if ($servicePrincipals = Get-AzureRmADServicePrincipal -SearchString $deploymentPrefix) {
                         $servicePrincipals | ForEach-Object {
                             log "Removing Service Principal - $($_.DisplayName)."
-                            Remove-AzureRmADServicePrincipal -ObjectId $_.Id -Force
+                            Remove-AzureRmADServicePrincipal -ObjectId $_.Id -Force -ErrorAction Continue
                             log "Service Principal - $($_.DisplayName) was removed successfully" Yellow -displaywithouttimestamp
                         }
                     }
