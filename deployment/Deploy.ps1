@@ -369,9 +369,8 @@ Process {
             Break
         }
 
-        log "Wait for AAD Users to be provisioned. Press Enter once AAD Users are provisioned. Press Ctrl + C to Stop the Deployment." Cyan
-        #$input = Read-Host
-        Sleep 15
+        log "Wait for AAD Users to be provisioned." Cyan
+        Start-Sleep 15
 
         ### Register Resource provider.
         log "Register Resource Providers."
@@ -512,7 +511,7 @@ Process {
             -TemplateParameterFile "$ScriptRoot/templates/webtest.parameters.json" `
             -TemplateFile "$ScriptRoot/templates/resources/microsoft.appinsights/webtest.json"
 
-        log "Deployment has been completed."
+        log "Deployment has been completed." Cyan
     }
 }
 End {
