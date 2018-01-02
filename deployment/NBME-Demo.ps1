@@ -3,7 +3,7 @@ param
 (
 	#commands
 	[Parameter(Mandatory=$true)]
-	[ValidateSet("Deploy","Ping","Spin","remove")]
+	[ValidateSet("Deploy","Spin","Remove")]
 	[string]$Command,
 
 	 #package version
@@ -47,21 +47,17 @@ if(!(Get-InstalledModule -Name 'AzureRM.Network' -ErrorAction SilentlyContinue))
 	Install-Module 'AzureRM.Network'
 }
 
-$scriptRoot = Split-Path $MyInvocation.MyCommand.Path
+if (((Get-AzureRmContext).Subscription.Id -eq $null) -or ((Get-AzureRmContext).Subscription.Id -ne $subscriptionId)) {
+	Login-AzureRmAccount -SubscriptionId $subscriptionId -TenantId $tenantId
+}
 
 switch($Command)
 {
-
 	Deploy
 	{
 		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId $tenantId -tenantDomain $tenantDomain -subscriptionId $subscriptionId -globalAdminUsername $globalAdminEmail -location $location -deploymentPassword $deploymentPassword -packageVersion $packageVersion
 	}
-	Ping{
-		$parameters = Get-Content "$ScriptRoot/templates/webtest.parameters.json" | ConvertFrom-Json
-
-		New-AzureRmResourceGroupDeployment -Name "CreateWebTest" -ResourceGroupName "$($parameters.parameters.prefix.value)-operations-rg" -TemplateParameterFile "$ScriptRoot/templates/webtest.parameters.json" -TemplateFile "$ScriptRoot/templates/resources/microsoft.appinsights/webtest.json"
-	}
-	spin
+	Spin
 	{
 		$resourceGroupName =  "$deploymentPrefix-networking-rg"
 
@@ -72,7 +68,7 @@ switch($Command)
 		Set-AzureRmApplicationGateway -ApplicationGateway $appGateway
 
 	}
-	remove
+	Remove
 	{
 		$resourceGroupName =  "$deploymentPrefix-workload-$packageVersion-rg"
 		$operationsResourceGroup = "$deploymentPrefix-networking-rg"
@@ -85,5 +81,4 @@ switch($Command)
 
 		Remove-AzureRmResourceGroup -Name $resourceGroupName -Force
 	}
-
 }
