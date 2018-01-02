@@ -166,9 +166,6 @@ Process {
     ### Converting deployment prefix to lowercase
     $deploymentprefix = $deploymentprefix.ToLower()
 
-    ### Actors 
-    $actors = @('Alex_SiteAdmin','Kim_NetworkAdmin')
-
     ### Create PSCredential Object for GlobalAdmin Account
     $credential = New-Object System.Management.Automation.PSCredential ($globalAdminUsername, $globalAdminPassword)
 
@@ -228,31 +225,6 @@ Process {
             else{ 
                 log "Service Principal does not exist for '$deploymentPrefix' prefix" Yellow
             }
-
-            #List the AD Application
-            $adApplicationObj = Get-AzureRmADApplication -DisplayNameStartWith "$deploymentPrefix Azure HealthCare LOS Sample"
-            log "AD Applications: " Cyan -displaywithouttimestamp
-            if($adApplicationObj -ne $null){
-                log "$($adApplicationObj.DisplayName)" -displaywithouttimestamp -nonewline
-            }
-            Else{
-                log "AD Application does not exist for '$deploymentPrefix' prefix" Yellow -displaywithouttimestamp
-            }
-
-            #List the AD Users
-            log "AD Users: " Cyan -displaywithouttimestamp
-            foreach ($actor in $actors) {
-                $upn = Get-AzureRmADUser -SearchString $actor -ErrorAction Continue
-                $fullUpn = $actor + '@' + $tenantDomain
-                if ($upn -ne $null )
-                {
-                    log "$fullUpn" -displaywithouttimestamp -nonewline
-                }
-            }
-            if ($upn -eq $null)
-            {
-                log "No user exist" Yellow -displaywithouttimestamp
-            }
             Write-Host ""
             # Remove deployment resources
             $message = "Do you want to DELETE above listed Deployment Resources ?"
@@ -283,50 +255,6 @@ Process {
                             log "Service Principal - $($_.DisplayName) was removed successfully" Yellow -displaywithouttimestamp
                         }
                     }
-
-                    # Remove Azure AD Users
-                    
-                    if ($upn -ne $null)
-                    {
-                        Write-Host "FOR DEVELOPMENT PURPOSE WE RECONFIRMING FOR AAD USERS DELETION." -ForegroundColor Magenta
-                            # Prompt to remove AAD Users
-                        $message = "Do you want to DELETE AAD users?"
-                        $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
-                        "Deletes AAD users"
-                        $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
-                        "Skips AAD users Deletion"
-                        $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
-                        $result = $host.ui.PromptForChoice($null, $message, $options, 0)
-                        switch ($result){
-                            0 {
-                        log "Removing Azure AAD User" Yellow -displaywithouttimestamp
-                        foreach ($actor in $actors) {
-                            try {
-                                $upn = $actor + '@' + $tenantDomain
-                                Get-AzureRmADUser -SearchString $upn
-                                Remove-AzureRmADUser -UPNOrObjectId $upn -Force -ErrorAction SilentlyContinue
-                                log "$upn was deleted successfully. " Yellow -displaywithouttimestamp
-                            }
-                            catch [System.Exception] {
-                                logerror
-                                Break
-                            }
-                        }
-                    }
-                    1 {
-                        log "Skipped - AAD users Deletion." Cyan
-                    }
-                }
-                    }
-                    
-                    #Remove AAD Application.
-                    if($adApplicationObj)
-                    {
-                        log "Removing Azure AD Application - $deploymentPrefix Azure HealthCare LOS Sample." Yellow -displaywithouttimestamp
-                        Get-AzureRmADApplication -DisplayNameStartWith "$deploymentPrefix Azure HealthCare LOS Sample" | Remove-AzureRmADApplication -Force
-                        log "Azure AD Application - $deploymentPrefix Azure HealthCare LOS Sample deleted successfully" Yellow -displaywithouttimestamp
-                    }
-                    log "Resources cleared successfully." Magenta
                 }
                 1 {
                     log "Skipped - Resource Deletion." Cyan
@@ -348,28 +276,6 @@ Process {
 
         ### Convert deploymentPasssword to SecureString.
         $secureDeploymentPassword = ConvertTo-SecureString $deploymentPassword -AsPlainText -Force
-
-        ### Convert Service Administrator to plaintext
-        $convertedServiceAdminPassword = $globalAdminPassword | ConvertFrom-SecureString 
-        $securePassword = ConvertTo-SecureString $convertedServiceAdminPassword
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword)
-        $plainServiceAdminPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-
-        ### Configure AAD User Accounts.
-        log "Creating AAD account for solution actors using ServiceAdmin Account."
-        try
-        {
-            log "Initiating separate powershell session for creating accounts."
-            Start-Process Powershell -ArgumentList "-NoExit", "-WindowStyle Normal", "-ExecutionPolicy UnRestricted", ".\scripts\pshscripts\Configure-AADUsers.ps1 -tenantId $tenantId -subscriptionId $subscriptionId -tenantDomain $tenantDomain -globalAdminUsername $globalAdminUsername -globalAdminPassword $plainServiceAdminPassword -deploymentPassword '$deploymentPassword'"
-        }
-        catch [System.Exception]
-        {
-            logerror
-            Break
-        }
-
-        log "Wait for AAD Users to be provisioned." Cyan
-        Start-Sleep 15
 
         ### Register Resource provider.
         log "Register Resource Providers."
@@ -400,15 +306,6 @@ Process {
             log "Creating ResourceGroup $rgName at $location."
             New-AzureRmResourceGroup -Name $rgName -Location $location -Force -OutVariable $_
         }
-
-        ### Assign Roles to the Users
-        log "Assigning roles to the users."
-        $rbactmp = [System.IO.Path]::GetTempFileName()
-        $rbacData = Get-Content "$scriptroot\scripts\jsonscripts\subscription.roleassignments.json" | ConvertFrom-Json
-        $rbacData.Subscription.Id = $subscriptionId
-        ( $rbacData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $rbactmp
-        Update-RoleAssignments -inputFile $rbactmp -prefix $deploymentPrefix -domain $tenantDomain
-        Start-Sleep 10
 
         ### Invoke ARM deployment.
         log "Intiating Zero Down Time Solution Deployment." Cyan
