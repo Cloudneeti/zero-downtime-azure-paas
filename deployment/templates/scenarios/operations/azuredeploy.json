@@ -27,12 +27,9 @@
     "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]",
     "solutionNames": [
       "AzureWebAppsAnalytics",
-      "ChangeTracking",
-      "KeyVaultAnalytics",
       "Security",
       "ApplicationInsights",
-      "AzureActivity",
-      "SecurityCenterFree"
+      "AzureActivity"
     ]
   },
   "resources": [

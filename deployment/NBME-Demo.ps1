@@ -47,10 +47,6 @@ if(!(Get-InstalledModule -Name 'AzureRM.Network' -ErrorAction SilentlyContinue))
 	Install-Module 'AzureRM.Network'
 }
 
-if (((Get-AzureRmContext).Subscription.Id -eq $null) -or ((Get-AzureRmContext).Subscription.Id -ne $subscriptionId)) {
-	Login-AzureRmAccount -SubscriptionId $subscriptionId -TenantId $tenantId
-}
-
 switch($Command)
 {
 	Deploy
@@ -59,8 +55,10 @@ switch($Command)
 	}
 	Spin
 	{
+		if (((Get-AzureRmContext).Subscription.Id -eq $null) -or ((Get-AzureRmContext).Subscription.Id -ne $subscriptionId)) {
+			Login-AzureRmAccount -SubscriptionId $subscriptionId -TenantId $tenantId
+		}
 		$resourceGroupName =  "$deploymentPrefix-networking-rg"
-
 		$appGateway = Get-AzureRmApplicationGateway -ResourceGroupName $resourceGroupName -Name "$deploymentPrefix-zdt-agw"
 		$backendPool = Get-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool'
 		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool' -BackendIPAddresses "$deploymentPrefix-webapp-v1.azurewebsites.net","$deploymentPrefix-webapp-v2.azurewebsites.net"
@@ -70,15 +68,16 @@ switch($Command)
 	}
 	Remove
 	{
+		if (((Get-AzureRmContext).Subscription.Id -eq $null) -or ((Get-AzureRmContext).Subscription.Id -ne $subscriptionId)) {
+			Login-AzureRmAccount -SubscriptionId $subscriptionId -TenantId $tenantId
+		}
 		$resourceGroupName =  "$deploymentPrefix-workload-$packageVersion-rg"
 		$operationsResourceGroup = "$deploymentPrefix-networking-rg"
 		$sites=@("$deploymentPrefix-webapp-v2.azurewebsites.net")
 		$appGateway = Get-AzureRmApplicationGateway -ResourceGroupName $operationsResourceGroup -Name "$deploymentPrefix-zdt-agw"
 		$backendPool = Get-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -Name 'appGatewayBackendPool'
 		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses $sites -Name 'appGatewayBackendPool'
-		
 		Set-AzureRmApplicationGateway -ApplicationGateway $appGateway
-
 		Remove-AzureRmResourceGroup -Name $resourceGroupName -Force
 	}
 }
