@@ -19,7 +19,19 @@
         },
         "pairedLocationName": {
             "type": "string"
-        }
+        },
+        "omsWorkspaceResourceId": {
+            "type": "string"
+        },
+        "logsRetentionInDays": {
+            "type": "int",
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+              "description": "Specifies the number of days that logs are gonna be kept. If you do not want to apply any retention policy and retain data forever, set value to 0."
+            }
+        }        
     },
     "resources": [
         {
@@ -43,6 +55,47 @@
                     }
                 ]
             },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "name": "Microsoft.Insights/service",
+                    "dependsOn": [
+                        "[parameters('name')]"
+                    ],
+                    "apiVersion": "2015-07-01",
+                    "properties": {
+                        "workspaceId": "[parameters('omsWorkspaceResourceId')]",
+                        "logs": [
+                            {
+                                "category": "DataPlaneRequests",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                "days": "[parameters('logsRetentionInDays')]",
+                                "enabled": true
+                                }
+                            },
+                            {
+                                "category": "MongoRequests",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                "days": "[parameters('logsRetentionInDays')]",
+                                "enabled": true
+                                }
+                            }                            
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "Requests",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                "enabled": true,
+                                "days": "[parameters('logsRetentionInDays')]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
             "tags": {
                 "defaultExperience": "[parameters('defaultExperience')]"
             }

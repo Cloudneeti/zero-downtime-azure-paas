@@ -42,7 +42,8 @@
           "locationName": {"value": "[parameters('backEndTier').cosmosdb.locationName]"},
           "defaultExperience": {"value": "[parameters('backEndTier').cosmosdb.defaultExperience]"},
           "pairedLocation": {"value": "[parameters('backEndTier').cosmosdb.pairedLocation]"},
-          "pairedLocationName": {"value": "[parameters('backEndTier').cosmosdb.pairedLocationName]"}
+          "pairedLocationName": {"value": "[parameters('backEndTier').cosmosdb.pairedLocationName]"},
+          "omsWorkspaceResourceId": {"value": "[resourceId(concat(parameters('environmentReference').prefix,'-operations-rg'),'Microsoft.OperationalInsights/workspaces', concat(parameters('environmentReference').prefix,'-',parameters('operations').logAnalytics.serviceName,'-analytics'))]"}          
         }
       }
     }
