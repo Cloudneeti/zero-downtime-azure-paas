@@ -8,10 +8,10 @@ namespace ZeroDowntime.Core
 {
     public class NBMEUser
     {
-        public string UserId { get; set; }
-
         public string Name { get; set; }
 
         public string Email { get; set; }
+
+        public string UserId { get; set; }
     }
 }

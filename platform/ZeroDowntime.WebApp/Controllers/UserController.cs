@@ -72,6 +72,8 @@ namespace ZeroDowntime.WebApp.Controllers
         [HttpPost]
         public ActionResult Create(NBMEUser user)
         {
+            user.UserId = Guid.NewGuid().ToString();
+
             Task.Run(
                 async () =>
                 {
@@ -89,7 +91,7 @@ namespace ZeroDowntime.WebApp.Controllers
 
                 var nbmeUsers = JsonConvert.DeserializeObject<NBMEUser[]>(response);
 
-            return View(nbmeUsers.AsEnumerable());
+            return RedirectToAction("List");
         }
 
         [HttpGet]
@@ -99,11 +101,11 @@ namespace ZeroDowntime.WebApp.Controllers
             Task.Run(
                 async () =>
                 {
-                    response = await HttpHelper.GetAsync(UpsertUserAPI);
+                    response = await HttpHelper.GetAsync(ListUsersAPI);
                 }).Wait();
 
             var nbmeUsers = JsonConvert.DeserializeObject<NBMEUser[]>(response);
-            var user = nbmeUsers.Where(u => u.UserId == id);
+            var user = nbmeUsers.Where(u => u.UserId == id).First();
             return View(user);
         }
 
@@ -133,12 +135,12 @@ namespace ZeroDowntime.WebApp.Controllers
                 }).Wait();
 
             NBMEUser[] nbmeUsers = null;
-            if (string.IsNullOrEmpty(response))
+            if (!string.IsNullOrEmpty(response))
             {
                 nbmeUsers = JsonConvert.DeserializeObject<NBMEUser[]>(response);
             }
             telemetryClient.TrackRequest($"Application Version-{ConfigurationManager.AppSettings["WebAppVersion"]}", requestStartTime, DateTime.UtcNow - requestStartTime, "200", true);
-            return View(nbmeUsers?.AsEnumerable());
+            return View(nbmeUsers.AsEnumerable());
         }
 
         //[HttpPost]

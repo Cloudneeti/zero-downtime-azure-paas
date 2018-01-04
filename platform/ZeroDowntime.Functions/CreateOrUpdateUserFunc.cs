@@ -33,6 +33,7 @@ namespace ZeroDowntime.Functions
             }
             catch(Exception ex)
             {
+                log.Error(ex.Message);
                 return req.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
