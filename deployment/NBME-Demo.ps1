@@ -55,6 +55,10 @@ switch($Command)
 	}
 	Spin
 	{
+		Write-Host "`tAdding Application version v2 to the Application Gateway Backend pool." -ForegroundColor Yellow 
+
+		Write-Host "`nTraffic will be distributed in a round-robin way between v1 and v2 workloads" -ForegroundColor Yellow 
+	
 		if (((Get-AzureRmContext).Subscription.Id -eq $null) -or ((Get-AzureRmContext).Subscription.Id -ne $subscriptionId)) {
 			Login-AzureRmAccount -SubscriptionId $subscriptionId -TenantId $tenantId
 		}
