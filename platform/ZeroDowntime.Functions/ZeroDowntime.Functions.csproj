@@ -44,7 +44,7 @@
       </Code>
     </Task>
   </UsingTask>
-  <Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
+  <!--<Target Name="ZipFunctions" AfterTargets="_GenerateFunctionsPostBuild">
      <XmlPeek XmlInputPath="App.Local.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
         <Output TaskParameter="Result" ItemName="fever" />
     </XmlPeek>
@@ -55,7 +55,7 @@
     
     <Message Text="Zip Functions" />
     <Zip Src="$(FunctionSrcFolder)" Dest="$(ArtifactsFolder)\$(FunctionsZipName)" />
-  </Target>
+  </Target>-->
   <Target Name="ClearFunctions" BeforeTargets="Build">
     <XmlPeek XmlInputPath="App.Local.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
         <Output TaskParameter="Result" ItemName="ever" />

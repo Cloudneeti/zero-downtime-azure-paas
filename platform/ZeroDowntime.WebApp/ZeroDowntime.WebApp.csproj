@@ -116,6 +116,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\nbme-frontend - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\um04-webapp-v1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\um26-webapp-v2 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\zdversionone - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\zdversiontwo - Web Deploy.pubxml" />
@@ -137,7 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\ItemController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -155,6 +156,9 @@
     <Content Include="Views\Item\Create.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Item\Index.cshtml" />
+    <Content Include="Views\User\list.cshtml" />
+    <Content Include="Views\User\create.cshtml" />
+    <Content Include="Views\User\edit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -164,6 +168,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZeroDowntime.Core\ZeroDowntime.Core.csproj">
+      <Project>{6057a3fa-f409-48f6-a393-6d55ab1f3a61}</Project>
+      <Name>ZeroDowntime.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -222,7 +232,7 @@
     <Message Text="Delete Existing Web App" />
     <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
   </Target>
-  <Target Name="ZipWebApp" AfterTargets="Build">
+  <!--<Target Name="ZipWebApp" AfterTargets="Build">
     <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='WebAppVersion']/@value">
       <Output TaskParameter="Result" ItemName="fever" />
     </XmlPeek>
@@ -232,7 +242,7 @@
     </PropertyGroup>
     <Message Text="Zip Web App" />
     <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />
-  </Target>
+  </Target>-->
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.19.1\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.19.1\build\Microsoft.Azure.DocumentDB.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

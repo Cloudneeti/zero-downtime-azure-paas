@@ -26,26 +26,26 @@ namespace ZeroDowntime.Functions
             {
                 //string endpoint = "https://zdcosmosdb.documents.azure.com:443/";
                 //string authkey = "8eIG2CLmqhjBLDWAOv9II2zLoY65WxOwKnmShyYq1I3TZStzRHIFejWIgczFvC2zi2SmTcEtr1mtpTNFdBdyXw==";
-                string endpoint = ConfigurationManager.AppSettings["CosmosDbEndpoint"];
-                string authKey = ConfigurationManager.AppSettings["CosmosDbKey"];
-                DocumentDBRepository<Item>.Initialize(endpoint, authKey);
-                if (req.Method == HttpMethod.Get)
-                {
-                    var results = await DocumentDBRepository<Item>.GetItemsAsync("ToDoList", "Items");
-                    return req.CreateResponse(HttpStatusCode.OK, new
-                    {
-                        items = results
-                    });
-                }
-                else
-                {
-                    var input = await req.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<Item>(input);
+                //string endpoint = ConfigurationManager.AppSettings["CosmosDbEndpoint"];
+                //string authKey = ConfigurationManager.AppSettings["CosmosDbKey"];
+                //DocumentDBRepository<NBMEUser>.Initialize(endpoint, authKey);
+                //if (req.Method == HttpMethod.Get)
+                //{
+                //    var results = await DocumentDBRepository<NBMEUser>.GetUsersAsync("ToDoList", "Items");
+                //    return req.CreateResponse(HttpStatusCode.OK, new
+                //    {
+                //        items = results
+                //    });
+                //}
+                //else
+                //{
+                //    var input = await req.Content.ReadAsStringAsync();
+                //    var data = JsonConvert.DeserializeObject<NBMEUser>(input);
                     
-                    var createdItem=await DocumentDBRepository<Item>.CreateItemAsync(data, "ToDoList", "Items");
-                    var item = await DocumentDBRepository<Item>.GetItemAsync(createdItem.SelfLink);
-                    return req.CreateResponse(HttpStatusCode.Created, item);
-                }
+                //    var createdItem=await DocumentDBRepository<NBMEUser>.CreateItemAsync(data, "ToDoList", "Items");
+                //    var item = await DocumentDBRepository<NBMEUser>.GetItemAsync(createdItem.SelfLink);
+                    return req.CreateResponse(HttpStatusCode.Created);
+                //}
             }
             catch(Exception ex)
             {

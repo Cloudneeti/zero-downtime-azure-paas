@@ -6,10 +6,12 @@ using Newtonsoft.Json;
 
 namespace ZeroDowntime.Core
 {
-    public class Item
+    public class NBMEUser
     {
-        public DateTime RequestTime { get; set; }
-        public string Version { get; set; }
-        public string Summary { get; set; }
+        public string UserId { get; set; }
+
+        public string Name { get; set; }
+
+        public string Email { get; set; }
     }
 }
