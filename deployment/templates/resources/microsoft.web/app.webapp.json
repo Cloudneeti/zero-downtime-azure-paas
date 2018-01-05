@@ -71,8 +71,12 @@
 
             },
             {
-              "name": "MiddleTierEndpoint",
-              "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), parameters('functionName')),'2015-08-01').trigger_url)]"
+              "name": "ListUsersAPI",
+              "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'ListUserFunc'),'2015-08-01').trigger_url)]"
+            },
+            {
+              "name": "UpsertUserAPI",
+              "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'CreateOrUpdateUserFunc'),'2015-08-01').trigger_url)]"
             }
           ]
         }
