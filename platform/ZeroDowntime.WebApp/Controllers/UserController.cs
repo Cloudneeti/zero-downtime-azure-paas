@@ -81,15 +81,6 @@ namespace ZeroDowntime.WebApp.Controllers
 
                 }).Wait();
 
-            string response = string.Empty;
-            Task.Run(
-                async () =>
-                {
-                    response = await HttpHelper.GetAsync(requestUri);
-                }).Wait();
-
-                var nbmeUsers = JsonConvert.DeserializeObject<NBMEUser[]>(response);
-
             return RedirectToAction("List");
         }
 
