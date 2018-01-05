@@ -232,7 +232,7 @@
     <Message Text="Delete Existing Web App" />
     <Delete Files="$(ArtifactsFolder)\$(WebAppZipName)" Condition="Exists('$(ArtifactsFolder)\$(WebAppZipName)')" />
   </Target>
-  <!--<Target Name="ZipWebApp" AfterTargets="Build">
+  <Target Name="ZipWebApp" AfterTargets="Build">
     <XmlPeek XmlInputPath="Web.config" Query="//appSettings/add[@key='WebAppVersion']/@value">
       <Output TaskParameter="Result" ItemName="fever" />
     </XmlPeek>
@@ -242,7 +242,7 @@
     </PropertyGroup>
     <Message Text="Zip Web App" />
     <Zip Src="$(WebAppSrcFolder)" Dest="$(ArtifactsFolder)\$(WebAppZipName)" />
-  </Target>-->
+  </Target>
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.19.1\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.19.1\build\Microsoft.Azure.DocumentDB.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

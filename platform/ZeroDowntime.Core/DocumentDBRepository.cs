@@ -106,23 +106,24 @@ namespace ZeroDowntime.Core
             return await client.ReadDocumentAsync<NBMEUser>(docLink);
         }
 
-        public static async Task<NBMEUser> GetUser(string id)
-        {
-            var users = await GetUsersAsync();
+        //public static async Task<NBMEUser> GetUser(string id)
+        //{
+        //    var users = await GetUsersAsync();
             
-            return users.Where(user=>user.UserId==id).FirstOrDefault();
-        }
+        //    return users.Where(user=>user.UserId==id).FirstOrDefault();
+        //}
 
         public static async Task UpsertNbmeUser(NBMEUser user)
         {
-            if (GetUser(user.UserId) != null)
-            {
-                await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId,user.UserId), user);
-            }
-            else
-            {
-                await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), user);
-            }
+            await client.UpsertDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), user);
+            //if (GetUser(user.UserId) != null)
+            //{
+            //    await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId,user.UserId), user);
+            //}
+            //else
+            //{
+            //    await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), user);
+            //}
         }
 
     }

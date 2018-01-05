@@ -72,7 +72,6 @@ namespace ZeroDowntime.WebApp.Controllers
         [HttpPost]
         public ActionResult Create(NBMEUser user)
         {
-            user.UserId = Guid.NewGuid().ToString();
 
             Task.Run(
                 async () =>
@@ -105,7 +104,7 @@ namespace ZeroDowntime.WebApp.Controllers
                 }).Wait();
 
             var nbmeUsers = JsonConvert.DeserializeObject<NBMEUser[]>(response);
-            var user = nbmeUsers.Where(u => u.UserId == id).First();
+            var user = nbmeUsers.Where(u => u.Id == id).First();
             return View(user);
         }
 
