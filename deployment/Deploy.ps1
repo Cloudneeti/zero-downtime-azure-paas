@@ -184,7 +184,7 @@ Process {
     }
 
     # components required for creating resourcegroup
-    $components = @("artifacts","workload-$deploymentPrefix","networking", "operations", "backend")
+    $components = @("artifacts","workload-$packageVersion", "networking", "operations", "backend")
 
     if ($clearDeployment) {
         try {
