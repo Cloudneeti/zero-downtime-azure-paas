@@ -175,7 +175,7 @@
             "properties": {
               "Port": 80,
               "Protocol": "Http",
-              "CookieBasedAffinity": "Disabled",
+              "CookieBasedAffinity": "Enabled",
               "PickHostNameFromBackendAddress":true,
               "ProbeEnabled":"[parameters('probeEnabled')]",
               "Probe": {

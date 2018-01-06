@@ -105,7 +105,7 @@ function log {
         $logFolderPath = $outputFolderPath #Set the log path here.
         $logtime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
         $logHash = $uniqueDeploymentHash
-        $Script:logFileName = (($deploymentPrefix,"HealthCare$logHash",(Get-Date -Format 'yyyy-MM-dd').ToString(),'log.txt') -join '-')
+        $Script:logFileName = (($deploymentPrefix,"ZeroDownTime$logHash",(Get-Date -Format 'yyyy-MM-dd').ToString(),'log.txt') -join '-')
         $filePath = $logFolderPath + '\' +$logFileName
         if (!(Test-Path -Path $filePath)){
             New-Item -Path $logFolderPath -Name $logFileName -ItemType File | Out-Null
