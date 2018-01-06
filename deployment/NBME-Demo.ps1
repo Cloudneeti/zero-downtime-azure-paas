@@ -88,8 +88,6 @@ switch($Command)
 		$backendPool = Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $appGateway -BackendIPAddresses $sites -Name 'appGatewayBackendPool'
 		Set-AzureRmApplicationGateway -ApplicationGateway $appGateway
 
-		Write-Host "`nTraffic will now be routed to v2. Users of v1 will now start seeing v2." -ForegroundColor Yellow 
-
 		Write-Host "`nRemoving Application version v1 resource group" -ForegroundColor Yellow 
 		Remove-AzureRmResourceGroup -Name $resourceGroupName -Force
 
