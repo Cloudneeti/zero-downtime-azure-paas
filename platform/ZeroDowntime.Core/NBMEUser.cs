@@ -10,6 +10,6 @@
 
         public int Phone { get; set; }
 
-        public string DataVersion { get; set; }
+        public string ApplicationVersion { get; set; }
     }
 }
