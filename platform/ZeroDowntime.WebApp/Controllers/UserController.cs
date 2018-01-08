@@ -105,6 +105,7 @@ namespace ZeroDowntime.WebApp.Controllers
             Task.Run(
                  async () =>
                  {
+                     user.ApplicationVersion = ConfigurationManager.AppSettings["WebAppVersion"];
                      await HttpHelper.PostAsync(UpsertUserAPI, JsonConvert.SerializeObject(user));
                  }).Wait();
 
