@@ -72,7 +72,7 @@ namespace ZeroDowntime.WebApp.Controllers
         [HttpPost]
         public ActionResult Create(NBMEUser user)
         {
-            user.ApplicationVersion = appVersion;
+            user.ApplicationVersion = ConfigurationManager.AppSettings["WebAppVersion"];
 
             Task.Run(
                 async () =>
