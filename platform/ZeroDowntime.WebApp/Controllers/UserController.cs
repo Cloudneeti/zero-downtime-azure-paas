@@ -71,12 +71,11 @@ namespace ZeroDowntime.WebApp.Controllers
 
         [HttpPost]
         public ActionResult Create(NBMEUser user)
-        {
-            user.ApplicationVersion = ConfigurationManager.AppSettings["WebAppVersion"];
-
+        {            
             Task.Run(
                 async () =>
                 {
+                    user.ApplicationVersion = ConfigurationManager.AppSettings["WebAppVersion"];
                     await HttpHelper.PostAsync(UpsertUserAPI,
                         JsonConvert.SerializeObject(user));
 
