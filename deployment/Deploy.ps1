@@ -216,18 +216,6 @@ Process {
                 }
             }
 
-            #List the Service principal
-            log "Service Principals: " Cyan -displaywithouttimestamp
-            $servicePrincipalObj = Get-AzureRmADServicePrincipal -SearchString $deploymentPrefix -ErrorAction SilentlyContinue
-            if ($servicePrincipalObj -ne $null)
-            {
-                $servicePrincipalObj | ForEach-Object {
-                    log "$($_.DisplayName)" -displaywithouttimestamp -nonewline
-                }
-            }
-            else{ 
-                log "Service Principal does not exist for '$deploymentPrefix' prefix" Yellow
-            }
             Write-Host ""
             # Remove deployment resources
             $message = "Do you want to DELETE above listed Deployment Resources ?"
@@ -247,15 +235,6 @@ Process {
                             log "Deleting Resource group $resourceGroupName" Yellow -displaywithouttimestamp
                             Remove-AzureRmResourceGroup -Name $resourceGroupName -Force -ErrorAction Continue | Out-Null
                             log "ResourceGroup $resourceGroupName was deleted successfully" Yellow -displaywithouttimestamp
-                        }
-                    }
-
-                    # Remove Service Principal
-                    if ($servicePrincipals = Get-AzureRmADServicePrincipal -SearchString $deploymentPrefix) {
-                        $servicePrincipals | ForEach-Object {
-                            log "Removing Service Principal - $($_.DisplayName)."
-                            Remove-AzureRmADServicePrincipal -ObjectId $_.Id -Force -ErrorAction Continue
-                            log "Service Principal - $($_.DisplayName) was removed successfully" Yellow -displaywithouttimestamp
                         }
                     }
                 }
