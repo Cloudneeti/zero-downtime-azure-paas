@@ -3,7 +3,7 @@ param
 (
 	#commands
 	[Parameter(Mandatory=$true)]
-	[ValidateSet("Deploy","Spin","Remove")]
+	[ValidateSet("Deploy","Spin","Remove","ClearAllResources")]
 	[string]$Command,
 
 	 #package version
@@ -94,6 +94,9 @@ switch($Command)
 		Write-Host "`nSuccessfully removed Application version v1" -ForegroundColor Yellow 
 
 		Write-Host "`nAll users will now experience application verion v2" -ForegroundColor Yellow 
-		
+	}
+	ClearAllResources
+	{
+		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId $tenantId -tenantDomain $tenantDomain -subscriptionId $subscriptionId -globalAdminUsername $globalAdminEmail -location $location -packageVersion $packageVersion -clearDeployment
 	}
 }

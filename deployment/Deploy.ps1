@@ -112,6 +112,9 @@ param
     [Parameter(Mandatory = $true,
     ParameterSetName = "Deployment",
     Position = 9)]
+    [Parameter(Mandatory = $true, 
+    ParameterSetName = "CleanUp", 
+    Position = 8)]
 	[ValidateSet("v1","v2")]
     [string]$packageVersion,
 
