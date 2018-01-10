@@ -361,6 +361,22 @@ Process {
             Break
         }    
 
+		# Start OMS Diagnostics
+    log "Getting OMS Workspace details.."
+    $omsWS = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $deploymentPrefix'-operations-rg'
+
+    log "Collecting list of resourcetype to enable log analytics."
+    $resourceTypes = @( 
+        "Microsoft.Web/serverFarms",
+        "Microsoft.Web/sites"
+    )
+    log "Enabling diagnostics for each resource type."
+    foreach($resourceType in $resourceTypes)
+    {
+        .\scripts\pshscripts\Enable-AzureRMDiagnostics.ps1 -WSID $omsWS.ResourceId -SubscriptionId $subscriptionId -ResourceType $resourceType -ResourceGroup $deploymentPrefix'-workload-'$packageVersion'-rg' -EnableLogs -EnableMetrics -Force
+    }
+
+
         log "Invoke Network deployment."
         Invoke-ARMDeployment -subscriptionId $subscriptionId -resourceGroupPrefix $deploymentPrefix -location $location -steps 4 -packageVersion $packageVersion
 

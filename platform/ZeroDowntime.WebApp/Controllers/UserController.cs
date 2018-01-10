@@ -18,7 +18,7 @@ namespace ZeroDowntime.WebApp.Controllers
         private string requestUri = ConfigurationManager.AppSettings["MiddleTierEndpoint"];
         private string ListUsersAPI = ConfigurationManager.AppSettings["ListUsersAPI"];
         private string UpsertUserAPI = ConfigurationManager.AppSettings["UpsertUserAPI"];
-
+        private string appVersion = ConfigurationManager.AppSettings["WebAppVersion"];
         private static RequestTelemetry telemetryRequest = new RequestTelemetry();
         private static TelemetryClient telemetryClient = new TelemetryClient()
         {
@@ -71,11 +71,11 @@ namespace ZeroDowntime.WebApp.Controllers
 
         [HttpPost]
         public ActionResult Create(NBMEUser user)
-        {
-
+        {            
             Task.Run(
                 async () =>
                 {
+                    user.ApplicationVersion = ConfigurationManager.AppSettings["WebAppVersion"];
                     await HttpHelper.PostAsync(UpsertUserAPI,
                         JsonConvert.SerializeObject(user));
 
@@ -105,6 +105,7 @@ namespace ZeroDowntime.WebApp.Controllers
             Task.Run(
                  async () =>
                  {
+                     user.ApplicationVersion = ConfigurationManager.AppSettings["WebAppVersion"];
                      await HttpHelper.PostAsync(UpsertUserAPI, JsonConvert.SerializeObject(user));
                  }).Wait();
 
