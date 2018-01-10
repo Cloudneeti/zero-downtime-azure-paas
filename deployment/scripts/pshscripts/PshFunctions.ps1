@@ -105,7 +105,7 @@ function log {
         $logFolderPath = $outputFolderPath #Set the log path here.
         $logtime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
         $logHash = $uniqueDeploymentHash
-        $Script:logFileName = (($deploymentPrefix,"HealthCare$logHash",(Get-Date -Format 'yyyy-MM-dd').ToString(),'log.txt') -join '-')
+        $Script:logFileName = (($deploymentPrefix,"ZeroDownTime$logHash",(Get-Date -Format 'yyyy-MM-dd').ToString(),'log.txt') -join '-')
         $filePath = $logFolderPath + '\' +$logFileName
         if (!(Test-Path -Path $filePath)){
             New-Item -Path $logFolderPath -Name $logFileName -ItemType File | Out-Null
@@ -297,8 +297,8 @@ function Invoke-ARMDeployment {
         $deploymentData = Get-DeploymentData $deploymentHash
         $deployments = @{
             1 = @{"name" = "operations"; "rg" = "operations"}
-            2 = @{"name" = "workload-$packageVersion"; "rg" = "workload-$packageVersion"};
-            3 = @{"name" = "backend"; "rg" = "backend"};
+            2 = @{"name" = "backend"; "rg" = "backend"}
+            3 = @{"name" = "workload-$packageVersion"; "rg" = "workload-$packageVersion"}
             4 = @{"name" = "networking"; "rg" = "networking"}
         }
         foreach ($step in $steps) {
@@ -386,6 +386,18 @@ function Get-DeploymentData($hash) {
     $parametersData.parameters.environmentReference.value.tenantDomain = $tenantDomain
     $parametersData.parameters.environmentReference.value.location = $location
 	$parametersData.parameters.environmentReference.value.packageVersion = $packageVersion
+
+	$webTestParameter  = Get-Content "$scriptroot\templates\webtest.parameters.json" | ConvertFrom-Json
+	$webTestParameter.parameters.prefix.value=$resourceGroupPrefix
+	$webTestParameter.parameters.appName.value="$resourceGroupPrefix-$($parametersData.parameters.operations.value.appInsights.serviceName)-appinsights"
+	$webTestParameter.parameters.webtestName.value=$parametersData.parameters.operations.value.appInsights.webtestName
+	$webTestParameter.parameters.alertrulesName.value=$parametersData.parameters.operations.value.appInsights.alertrulesName
+	$webTestParameter.parameters.location.value=$location
+	$webTestParameter.parameters.webTestUrl.value="http://$resourceGroupPrefix-$($parametersData.parameters.operations.value.appInsights.serviceName)-tfm.trafficmanager.net"
+	Remove-Item "$scriptroot\templates\webtest.parameters.json"
+	($webTestParameter | ConvertTo-Json -Depth 2) | Out-File "$scriptroot\templates\webtest.parameters.json"
+
+
     ( $parametersData | ConvertTo-Json -Depth 10 ) -replace "\\u0027", "'" | Out-File $tmp
     $deploymentName, $tmp
 }

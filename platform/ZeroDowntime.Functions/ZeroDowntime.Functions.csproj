@@ -57,6 +57,13 @@
     <Zip Src="$(FunctionSrcFolder)" Dest="$(ArtifactsFolder)\$(FunctionsZipName)" />
   </Target>
   <Target Name="ClearFunctions" BeforeTargets="Build">
+    <XmlPeek XmlInputPath="App.Local.config" Query="//appSettings/add[@key='FunctionVersion']/@value">
+        <Output TaskParameter="Result" ItemName="ever" />
+    </XmlPeek>
+    <Message Text="Clear Target Artifact version: @(ever)" Importance="high" />
+    <PropertyGroup>
+      <ArtifactsFolder>$(SolutionDir)\deployment\artifacts\@(ever)\function</ArtifactsFolder>
+    </PropertyGroup>
     <Message Text="Delete Existing Functions" />
     <Delete Files="$(ArtifactsFolder)\$(FunctionsZipName)" Condition="Exists('$(ArtifactsFolder)\$(FunctionsZipName)')" />
   </Target>

@@ -65,7 +65,7 @@
     "operations": {
       "value": {
         "appInsights": {
-          "webtestName": "zdt",
+          "webtestName": "pingtest",
           "alertrulesName": "zdtAlerts",
           "serviceName": "zdt",
           "tags": {
@@ -84,6 +84,13 @@
       "value": {
         "trafficManager": {
           "serviceName": "zdt",
+          "tags": {
+            "tier": "network"
+          }
+        },
+        "appGateway": {
+          "serviceName": "zdt",
+          "webAppName": "nbmepoc-v1",
           "tags": {
             "tier": "network"
           }

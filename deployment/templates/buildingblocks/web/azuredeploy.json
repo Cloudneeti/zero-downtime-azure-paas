@@ -40,7 +40,7 @@
   "variables": {
     "appInsightName": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('appInsightsServiceName'),'-appinsights'))]",
     "appInsightsResourceGroup": "[toLower(concat(parameters('uniquePrefix'),'-operations-rg'))]",
-    "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg')]",
+    "functionAppStorageAccName": "[concat(replace(toLower(concat(parameters('uniquePrefix'),'-fapp')),'-',''),'stg',parameters('packageVersion'))]",
     "functionAppName": "[toLower(concat(parameters('uniquePrefix'),'-fapp-',parameters('packageVersion')))]"
   },
   "resources": [
@@ -168,10 +168,13 @@
             "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').hostingPlanServiceName,'-appsvcplan'))]"
           },
           "WebAppName": {
-            "value": "[toLower(concat(parameters('uniquePrefix'),'-',parameters('webApp').serviceName,'-webapp-',parameters('packageVersion')))]"
+            "value": "[toLower(concat(parameters('uniquePrefix'),'-webapp-',parameters('packageVersion')))]"
           },
-          "functionEndpoint": {
-            "value": "[concat('http://',variables('functionAppName'),'.azurewebsites.net')]"
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "functionName": {
+            "value": "CosmosDataAccessFunc"
           },
           "location": {
             "value": "[parameters('location')]"
@@ -220,5 +223,6 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+  }
 }

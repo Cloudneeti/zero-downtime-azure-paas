@@ -39,8 +39,8 @@
         "numberOfWorkers": 1
       },
       "sku": {
-        "name": "F1",
-        "tier": "Free",
+        "name": "B1",
+        "tier": "Basic",
         "capacity": "1"
       }
     }

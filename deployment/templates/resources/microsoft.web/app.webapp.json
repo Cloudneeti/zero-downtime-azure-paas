@@ -17,7 +17,10 @@
         "description": "Name of web site."
       }
     },
-    "functionEndpoint": {
+    "functionAppName": {
+      "type": "string"
+    },
+    "functionName": {
       "type": "string"
     },
     "location": {
@@ -49,49 +52,55 @@
       "type": "object"
     }
   },
-    "resources": [
-      {
+  "resources": [
+    {
+      "name": "[parameters('WebAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-08-01",
+      "tags": "[parameters('tags')]",
+      "properties": {
         "name": "[parameters('WebAppName')]",
-        "type": "Microsoft.Web/sites",
-        "location": "[parameters('location')]",
-        "apiVersion": "2015-08-01",
-        "tags": "[parameters('tags')]",
-        "properties": {
-          "name": "[parameters('WebAppName')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-          "siteConfig": {
-            "appSettings": [
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
-              },
-              {
-                "name": "MiddleTierEndpoint",
-                "value": "[parameters('functionEndpoint')]"
-              }
-            ]
-          }
-        },
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "appSettings": [
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId(parameters('appInsightsResourceGroup'),'microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
 
-        "resources": [
-          {
-            "name": "MSDeploy",
-            "type": "extensions",
-            "location": "[parameters('location')]",
-            "apiVersion": "2015-08-01",
-            "dependsOn": [
-              "[concat('Microsoft.Web/sites/', parameters('WebAppName'))]"
-            ],
-            "tags": {
-              "displayName": "WebAppMSDeploy"
             },
-            "properties": {
-              "packageUri": "[parameters('DeployPackageURI')]"
+            {
+              "name": "ListUsersAPI",
+              "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'ListUserFunc'),'2015-08-01').trigger_url)]"
+            },
+            {
+              "name": "UpsertUserAPI",
+              "value": "[concat(listSecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'CreateOrUpdateUserFunc'),'2015-08-01').trigger_url)]"
             }
+          ]
+        }
+      },
+
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[parameters('location')]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('WebAppName'))]"
+          ],
+          "tags": {
+            "displayName": "WebAppMSDeploy"
+          },
+          "properties": {
+            "packageUri": "[parameters('DeployPackageURI')]"
           }
-        ]
-      }
-    ],
-    "outputs": {
+        }
+      ]
     }
+  ],
+  "outputs": {
+  }
 }

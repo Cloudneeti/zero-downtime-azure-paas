@@ -27,12 +27,9 @@
     "trafficManagerName": "[toLower(concat(parameters('environmentReference').prefix,'-',parameters('network').trafficManager.serviceName,'-tfm'))]",
     "solutionNames": [
       "AzureWebAppsAnalytics",
-      "ChangeTracking",
-      "KeyVaultAnalytics",
       "Security",
       "ApplicationInsights",
-      "AzureActivity",
-      "SecurityCenterFree"
+      "AzureActivity"
     ]
   },
   "resources": [
@@ -79,35 +76,6 @@
           },
           "priceCode": {
             "value": 2
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "webAlerts",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "appInsights" ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('environmentReference')._artifactsLocation,'templates/resources/microsoft.appinsights/webtest.json')]"
-        },
-        "parameters": {
-          "appName": {
-            "value": "[variables('appInsightsName')]"
-          },
-          "webtestName": {
-            "value": "[parameters('operations').appInsights.webtestName]"
-          },
-          "alertrulesName": {
-            "value": "[parameters('operations').appInsights.alertrulesName]"
-          },
-          "location": {
-            "value": "[parameters('environmentReference').location]"
-          },
-          "webTestUrl": {
-            "value": "[concat('http://',variables('trafficManagerName'),'.trafficmanager.net')]"
           }
         }
       }

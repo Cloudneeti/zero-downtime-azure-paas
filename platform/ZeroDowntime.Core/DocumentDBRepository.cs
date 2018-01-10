@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace ZeroDowntime.Core
 {
-    public static class DocumentDBRepository<T> where T : class
+    public static class DocumentDBRepository
     {
         private static DocumentClient client;
 
+        private static readonly string DatabaseId = "NBMEDB";
+        private static readonly string CollectionId = "Users";
         /// <summary>
         /// Method to intialize Cosmos DB
         /// </summary>
@@ -39,13 +41,13 @@ namespace ZeroDowntime.Core
         {
             try
             {
-                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri("ToDoList"));
+                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DocumentDBRepository.DatabaseId));
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await client.CreateDatabaseAsync(new Database { Id = "ToDoList" });
+                    await client.CreateDatabaseAsync(new Database { Id = DocumentDBRepository.DatabaseId });
                 }
                 else
                 {
@@ -58,15 +60,17 @@ namespace ZeroDowntime.Core
         {
             try
             {
-                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri("ToDoList", "Items"));
+                await client.ReadDocumentCollectionAsync(
+                    UriFactory.CreateDocumentCollectionUri(DocumentDBRepository.DatabaseId, 
+                    DocumentDBRepository.CollectionId));
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     await client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri("ToDoList"),
-                        new DocumentCollection { Id = "Items" },
+                        UriFactory.CreateDatabaseUri(DocumentDBRepository.DatabaseId),
+                        new DocumentCollection { Id = DocumentDBRepository.CollectionId },
                         new RequestOptions { OfferThroughput = 1000 });
                 }
                 else
@@ -76,25 +80,50 @@ namespace ZeroDowntime.Core
             }
         }
 
-
-        public static async Task<Document> CreateItemAsync(T item, string DatabaseId, string CollectionId)
+        public static async Task<Document> CreateUserAsync(NBMEUser user)
         {
-            return await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), item);
+            return await client.CreateDocumentAsync(
+                UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), user);
         }
 
-        public static async Task<IEnumerable<T>> GetItemsAsync(string DatabaseId, string CollectionId)
+        public static async Task<IEnumerable<NBMEUser>> GetUsersAsync()
         {
-            IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
+            IDocumentQuery<NBMEUser> query = client.CreateDocumentQuery<NBMEUser>(
                 UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId))
                 .AsDocumentQuery();
 
-            List<T> results = new List<T>();
+            List<NBMEUser> results = new List<NBMEUser>();
             while (query.HasMoreResults)
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                results.AddRange(await query.ExecuteNextAsync<NBMEUser>());
             }
 
             return results;
+        }
+
+        public static async Task<NBMEUser> GetItemAsync(string docLink)
+        {
+            return await client.ReadDocumentAsync<NBMEUser>(docLink);
+        }
+
+        //public static async Task<NBMEUser> GetUser(string id)
+        //{
+        //    var users = await GetUsersAsync();
+            
+        //    return users.Where(user=>user.UserId==id).FirstOrDefault();
+        //}
+
+        public static async Task UpsertNbmeUser(NBMEUser user)
+        {
+            await client.UpsertDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), user);
+            //if (GetUser(user.UserId) != null)
+            //{
+            //    await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId,user.UserId), user);
+            //}
+            //else
+            //{
+            //    await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), user);
+            //}
         }
 
     }
