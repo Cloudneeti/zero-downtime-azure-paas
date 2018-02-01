@@ -3,7 +3,7 @@ param
 (
 	#commands
 	[Parameter(Mandatory=$true)]
-	[ValidateSet("Deploy","Spin","Remove","ClearAllResources")]
+	[ValidateSet("Deploy","Spin","Remove","ClearAllResources","InstallModules")]
 	[string]$Command,
 
 	 #package version
@@ -98,5 +98,9 @@ switch($Command)
 	ClearAllResources
 	{
 		.\Deploy.ps1 -deploymentPrefix $deploymentPrefix -tenantId $tenantId -tenantDomain $tenantDomain -subscriptionId $subscriptionId -globalAdminUsername $globalAdminEmail -location $location -packageVersion $packageVersion -clearDeployment
+	}
+    InstallModules
+	{
+	    .\Deploy.ps1 -installModules
 	}
 }
