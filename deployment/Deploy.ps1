@@ -159,7 +159,7 @@ Process {
         log "Trying to install listed modules.."
         $requiredModules
         Install-RequiredModules -moduleNames $requiredModules
-        log "All the required modules are now installed. You can now re-run the script without 'installModules' switch." Cyan
+        log "All the required modules are now installed. You can now re-run the script for deployment." Cyan
         Break
     }
 
